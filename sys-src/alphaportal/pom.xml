@@ -18,6 +18,8 @@
 		alpha-Flow document-oriented process paradigm and 
 		enables process support in inter-institutional scenarios.
 	</description>
+	
+	<url>https://swat.wiki6.informatik.uni-erlangen.de/swat2011</url>
 
 	<organization>
 		<name>Friedrich-Alexander University</name>
@@ -74,16 +76,15 @@
 	</mailingLists>
 
 	<scm>
-		<connection>scm:svn:svn+ssh://faui6svn.informatik.uni-erlangen.de/proj/svn/projekte/swat/swat2011/junction/swat-default/devT/sys-src/
+		<connection>scm:svn:https://svn.origo.ethz.ch/alphaportal/dev/trunk/sys-src/
 		</connection>
-		<developerConnection>scm:svn:svn+ssh://faui6svn.informatik.uni-erlangen.de/proj/svn/projekte/promed/alphaflow/junction/alphaflow-default/devT_otw/sys-src/
-		</developerConnection>
+		<developerConnection>scm:svn:https://svn.origo.ethz.ch/alphaportal/dev/trunk/sys-src/</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 
 	<issueManagement>
 		<system>JIRA</system>
-		<url>http://faui6jira:8080/browse/ALPHAPORTAL</url>
+		<url>http://www6.informatik.uni-erlangen.de/jira/browse/ALPHAPORTAL</url>
 	</issueManagement>
 
 
