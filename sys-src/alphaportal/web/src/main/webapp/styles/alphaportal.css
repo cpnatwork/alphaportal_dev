@@ -1,0 +1,164 @@
+@font-face { font-family: Numans; src: url('fonts/Numans-Regular.ttf'); }
+@font-face { font-family: Shanti; src: url('fonts/Shanti-Regular.ttf'); }
+
+body {
+	font-family: "Helvetica Neue", Helvetica, Geneva, sans-serif, Arial;
+}
+
+
+div#canvas {
+	max-width: 1200px;
+	min-width: 600;
+	min-height: 150px;
+	margin-top: 40px;
+	margin-bottom: 80px;
+}
+
+.cardButton {
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  background-repeat: no-repeat;
+  margin-bottom: 2px;
+}
+
+.card {
+	width: 220px;
+/*	max-width: 280px; */
+	height: 220px;
+	float: left;
+	-moz-box-shadow: 0 1px 5px black;
+	-webkit-box-shadow: 0 1px 5px black;
+	box-shadow: 0 1px 5px black;
+	margin: 8px;
+	border-radius: 5px;
+	position: relative;
+	display: block;
+	background-color: #d2d1d1;
+}
+
+.card form {
+  height: 100%;
+}
+
+.innercard {
+	float: none;
+	position: relative;
+	margin-left: 9px;
+	border-radius: 5px;
+	background-color: white;
+	max-width: 100%;
+	height: 100%;
+	opacity: 0.95;
+	overflow: hidden;
+	-moz-box-shadow: 0 0 3px rgb(11, 30, 13);
+	-webkit-box-shadow: 0 0 3px rgb(11, 30, 13);
+	box-shadow: 0 0 3px rgb(11, 30, 13);
+	overflow-x: hidden;
+	overflow-y: auto;  
+}
+
+.innercard_selected {
+		overflow-y: scroll;
+	}
+
+.content {
+  position: relative;
+  height: 100%;
+}
+
+.cardButtons {
+  position: absolute;
+  right: 0px;
+  top: 37px;
+  width: 25px;
+  float: right;
+}
+
+.cardheader {
+	overflow: hidden;
+	padding: 5px;
+	text-transform: uppercase;
+	height: 25px;
+	line-height: 25px;
+	font-size: medium; /* Shanti;*/
+	margin-bottom: 5px;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(211, 211, 211, 0)), color-stop(0.999, rgba(229, 229, 229, 0.97)));
+	background-image: -moz-linear-gradient(270deg, rgba(211, 211, 211, 0) 0%, rgba(229, 229, 229, 0.97) 99.9%);
+	border-bottom: 1px solid #d2d1d1;
+}
+
+.main {
+	width: 100%;
+	font-size: x-small;
+	padding: 5px;
+}
+
+
+
+div.main > div.row.essential {
+	display: none;
+}
+div.card.active div.main > div.row {
+	display: block;
+}
+div.main > div.row {
+  margin-bottom: 0.5em;
+}
+div.main > div.row > div.name {
+	display: inline-block;
+	width: 50%;
+}
+div.main > div.row > div.value {
+	display: inline-block;
+}
+
+
+/* some old stuff */
+.leftBox, rightBox {
+  width: 43%;
+ /* max-width: 43%;*/
+  min-width: 40%;
+  text-align: left;
+  vertical-align: top;
+}
+
+.leftbox {
+  padding-right: 5px;
+  float: left;
+}
+
+.rightBox {
+  padding-left: 5px;
+  float: right;
+}
+
+.rightBoxOld {
+  width: 49%;
+/*  max-width: 49%;*/
+  min-width: 49%;
+  padding: 15px 20px 15px 20px;
+  /*	text-align: right; */
+  float: right;
+  vertical-align: top;
+  /* margin-top: 35px; */
+  border: 1px solid #F8F8F8;
+  border-radius: 20px;
+  background-color: #FAFAFA;
+}
+
+
+.centerBox {
+  width: 43%;
+  max-width: 43%;
+  min-width: 40%;
+  padding-right: 2px;
+  text-align: left;
+  vertical-align: top;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* jQuery fix */
+.ui-widget { text-align: left; }

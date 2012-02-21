@@ -1,0 +1,20 @@
+[Desktop Entry]
+Comment[de]=
+Comment=
+Exec=/home/i6stud/ew28uwuw/progs/eclipse/eclipse
+GenericName[de]=
+GenericName=
+Icon=/home/i6stud/ew28uwuw/progs/eclipse/icon.xpm
+MimeType=
+Name[de]=Eclipse (SWAT)
+Name=Eclipse (SWAT)
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-KDE-SubstituteUID=false
+X-KDE-Username=
+X-SuSE-translate=true

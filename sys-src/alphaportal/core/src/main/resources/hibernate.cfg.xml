@@ -1,0 +1,36 @@
+<!-- NOTE: If you're working offline, you might have to change the DOCTYPE to the following:
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">-->
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+	<!-- 
+		show_sql = true/false
+		format_sql
+		generate_statistics
+		use_sql_comments
+		
+		max_fetch_depth = int
+		
+		hbm2ddl.auto = validate | update | create | create-drop 
+			create: destroy old, create-drop: destroy at end of session
+		
+		<property name=""></property>
+	 -->
+    <session-factory>
+        <mapping class="org.appfuse.model.User"/>
+        <mapping class="org.appfuse.model.Role"/>
+        <mapping class="alpha.portal.model.UserExtension"/>
+        <mapping class="alpha.portal.model.AlphaCase"/>
+        <mapping class="alpha.portal.model.UserSession"/>
+        
+        <mapping class="alpha.portal.model.AlphaCard"/>
+        <mapping class="alpha.portal.model.AlphaCardDescriptor"/>
+        <mapping class="alpha.portal.model.Adornment"/>
+        <mapping class="alpha.portal.model.AlphaCardIdentifier"/>
+        <mapping class="alpha.portal.model.Payload"/>
+        <mapping class="alpha.portal.model.ContributorRole"/>
+        <mapping class="alpha.portal.model.ContributorRequest"/>
+    </session-factory>
+</hibernate-configuration>

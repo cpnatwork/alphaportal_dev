@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+  version="2.0">
+  
+    <description>Custom AlphaPortal functions</description>
+    <display-name>AlphaPortal functions</display-name>
+    <tlib-version>1.0</tlib-version>
+    <short-name>functions</short-name>
+    <uri>http://alpha.portal/functions</uri>
+
+	<function>
+		<description>Get an adornment's value of the given card by the adornment's name</description>
+    	<name>adornmentValueFromCard</name>
+	    <function-class>alpha.portal.webapp.util.Functions</function-class>
+	    <function-signature>java.lang.String adornmentValueFromCard(java.lang.String, alpha.portal.model.AlphaCard)</function-signature>
+	    <example>${apf:adornmentValueFromCard('Titel', card)}</example>
+	</function>
+	<function>
+		<description>Get the data-provision-sate from card</description>
+    	<name>dataProvisionFromCard</name>
+	    <function-class>alpha.portal.webapp.util.Functions</function-class>
+	    <function-signature>java.lang.String dataProvisionFromCard(alpha.portal.model.AlphaCard)</function-signature>
+	    <example>
+	    </example>
+	</function>
+	<function>
+		<name>isUserContributor</name>
+	    <function-class>alpha.portal.webapp.util.Functions</function-class>
+	    <function-signature>boolean isUserContributor(java.lang.Long, alpha.portal.model.AlphaCard)</function-signature>
+	</function>
+	<function>
+		<name>isCardMarkedAsDeleted</name>
+	    <function-class>alpha.portal.webapp.util.Functions</function-class>
+	    <function-signature>boolean isCardMarkedAsDeleted(alpha.portal.model.AlphaCard)</function-signature>
+	</function>
+	<function>
+		<name>contains</name>
+	    <function-class>alpha.portal.webapp.util.Functions</function-class>
+	    <function-signature>boolean contains(java.lang.String[], java.lang.String)</function-signature>
+	</function>
+</taglib>
