@@ -1,3 +1,23 @@
+/**************************************************************************
+ * alpha-Portal: A web portal, for managing knowledge-driven 
+ * ad-hoc processes, in form of case files.
+ * ==============================================
+ * Copyright (C) 2011-2012 by 
+ *   - Christoph P. Neumann (http://www.chr15t0ph.de)
+ *   - and the SWAT 2011 team
+ **************************************************************************
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and 
+ * limitations under the License.
+ **************************************************************************
+ * $Id$
+ *************************************************************************/
 package alpha.portal.webapp.controller;
 
 import java.util.LinkedList;
@@ -23,114 +43,165 @@ import alpha.portal.model.ContributorRequest;
 import alpha.portal.service.AlphaCardManager;
 import alpha.portal.service.CaseManager;
 
+/**
+ * The Class DashBoardController.
+ */
 @Controller
 @RequestMapping("/dashBoard*")
 public class DashBoardController {
 
-    @Autowired
-    private AlphaCardManager alphaCardManager;
+	/** The alpha card manager. */
+	@Autowired
+	private AlphaCardManager alphaCardManager;
 
-    @Autowired
-    private UserManager userManager;
+	/** The user manager. */
+	@Autowired
+	private UserManager userManager;
 
-    @Autowired
-    private CaseManager caseManager;
+	/** The case manager. */
+	@Autowired
+	private CaseManager caseManager;
 
-    @Autowired
-    private AlphaCardManager cardManager;
+	/** The card manager. */
+	@Autowired
+	private AlphaCardManager cardManager;
 
-    @Autowired
-    private GenericManager<ContributorRequest, Long> contrReqManager;
+	/** The contr req manager. */
+	@Autowired
+	private GenericManager<ContributorRequest, Long> contrReqManager;
 
-    @RequestMapping(method = RequestMethod.GET)
-    protected ModelAndView showForm(final HttpServletRequest request) {
-        ModelAndView model = new ModelAndView("dashBoard");
-        AlphaCard activeCard = null;
+	/**
+	 * Show form.
+	 * 
+	 * @param request
+	 *            the request
+	 * @return the model and view
+	 */
+	@RequestMapping(method = RequestMethod.GET)
+	protected ModelAndView showForm(final HttpServletRequest request) {
+		final ModelAndView model = new ModelAndView("dashBoard");
+		AlphaCard activeCard = null;
 
-        String version = request.getParameter("version");
-        Long versionL = null;
-        if (StringUtils.isNotBlank(version)) {
-            try {
-                versionL = Long.parseLong(version);
-            } catch (NumberFormatException e) {
+		final String version = request.getParameter("version");
+		Long versionL = null;
+		if (StringUtils.isNotBlank(version)) {
+			try {
+				versionL = Long.parseLong(version);
+			} catch (final NumberFormatException e) {
 
-            }
-        }
+			}
+		}
 
-        // get the current user
-        User currentUser = userManager.getUserByUsername(request.getRemoteUser());
+		// get the current user
+		final User currentUser = this.userManager.getUserByUsername(request
+				.getRemoteUser());
 
-        List<AlphaCase> caseList = caseManager.findByParticipant(currentUser);
+		final List<AlphaCase> caseList = this.caseManager
+				.findByParticipant(currentUser);
 
-        List<AlphaCard> cardsList = cardManager.listDashBoardCards(caseList);
+		final List<AlphaCard> cardsList = this.cardManager
+				.listDashBoardCards(caseList);
 
-        for (AlphaCard c : cardsList) {
-            if (c.getAlphaCardIdentifier().getSequenceNumber().equals(versionL)) {
-                activeCard = c;
-                break;
-            }
-        }
+		for (final AlphaCard c : cardsList) {
+			if (c.getAlphaCardIdentifier().getSequenceNumber().equals(versionL)) {
+				activeCard = c;
+				break;
+			}
+		}
 
-        List<ContributorRequest> contrReqList = contrReqManager.getAll();
-        List<ContributorRequest> newList = new LinkedList<ContributorRequest>();
+		final List<ContributorRequest> contrReqList = this.contrReqManager
+				.getAll();
+		final List<ContributorRequest> newList = new LinkedList<ContributorRequest>();
 
-        if (!contrReqList.isEmpty()) {
-            for (ContributorRequest req : contrReqList) {
-                if (currentUser.getId().equals(req.getAcceptingUser().getId())) {
-                    newList.add(req);
-                }
-            }
-        }
+		if (!contrReqList.isEmpty()) {
+			for (final ContributorRequest req : contrReqList) {
+				if (currentUser.getId().equals(req.getAcceptingUser().getId())) {
+					newList.add(req);
+				}
+			}
+		}
 
-        model.addObject("requests", newList);
+		model.addObject("requests", newList);
 
-        model.addObject("cards", cardsList);
-        model.addObject("activeCard", activeCard);
+		model.addObject("cards", cardsList);
+		model.addObject("activeCard", activeCard);
 
-        return model;
-    }
+		return model;
+	}
 
-    @RequestMapping(method = RequestMethod.POST, params = { "acceptRequest" })
-    public String acceptRequest(final ContributorRequest contributorRequest, final BindingResult errors,
-            final HttpServletRequest request) throws Exception {
+	/**
+	 * Accept request.
+	 * 
+	 * @param contributorRequest
+	 *            the contributor request
+	 * @param errors
+	 *            the errors
+	 * @param request
+	 *            the request
+	 * @return the string
+	 * @throws Exception
+	 *             the exception
+	 */
+	@RequestMapping(method = RequestMethod.POST, params = { "acceptRequest" })
+	public String acceptRequest(final ContributorRequest contributorRequest,
+			final BindingResult errors, final HttpServletRequest request)
+			throws Exception {
 
-        // get the current user
-        String reqId = request.getParameter("sel");
+		// get the current user
+		final String reqId = request.getParameter("sel");
 
-        ContributorRequest contrReq = contrReqManager.get(Long.parseLong(reqId));
-        if (contrReq == null) {
-            // TODO Error
-        }
+		final ContributorRequest contrReq = this.contrReqManager.get(Long
+				.parseLong(reqId));
+		if (contrReq == null) {
+			// TODO Error
+		}
 
-        User currentUser = userManager.getUserByUsername(request.getRemoteUser());
+		final User currentUser = this.userManager.getUserByUsername(request
+				.getRemoteUser());
 
-        AlphaCard aCard = contrReq.getAlphaCard();
+		final AlphaCard aCard = contrReq.getAlphaCard();
 
-        aCard.getAlphaCase().addParticipant(currentUser);
-        caseManager.save(aCard.getAlphaCase());
-        aCard.getAlphaCardDescriptor()
-                .setAdornment(AdornmentType.Contributor.getName(), currentUser.getId().toString());
-        alphaCardManager.save(aCard);
+		aCard.getAlphaCase().addParticipant(currentUser);
+		this.caseManager.save(aCard.getAlphaCase());
+		aCard.getAlphaCardDescriptor().setAdornment(
+				AdornmentType.Contributor.getName(),
+				currentUser.getId().toString());
+		this.alphaCardManager.save(aCard);
 
-        contrReqManager.remove(Long.parseLong(reqId));
+		this.contrReqManager.remove(Long.parseLong(reqId));
 
-        return "redirect:/dashBoard";
-    }
+		return "redirect:/dashBoard";
+	}
 
-    @RequestMapping(method = RequestMethod.POST, params = { "denyRequest" })
-    public String denyRequest(final ContributorRequest contributorRequest, final BindingResult errors,
-            final HttpServletRequest request) throws Exception {
+	/**
+	 * Deny request.
+	 * 
+	 * @param contributorRequest
+	 *            the contributor request
+	 * @param errors
+	 *            the errors
+	 * @param request
+	 *            the request
+	 * @return the string
+	 * @throws Exception
+	 *             the exception
+	 */
+	@RequestMapping(method = RequestMethod.POST, params = { "denyRequest" })
+	public String denyRequest(final ContributorRequest contributorRequest,
+			final BindingResult errors, final HttpServletRequest request)
+			throws Exception {
 
-        // get the current user
-        String reqId = request.getParameter("sel");
+		// get the current user
+		final String reqId = request.getParameter("sel");
 
-        ContributorRequest contrReq = contrReqManager.get(Long.parseLong(reqId));
-        if (contrReq == null) {
-            // TODO Error
-        }
+		final ContributorRequest contrReq = this.contrReqManager.get(Long
+				.parseLong(reqId));
+		if (contrReq == null) {
+			// TODO Error
+		}
 
-        contrReqManager.remove(Long.parseLong(reqId));
+		this.contrReqManager.remove(Long.parseLong(reqId));
 
-        return "redirect:/dashBoard";
-    }
+		return "redirect:/dashBoard";
+	}
 }

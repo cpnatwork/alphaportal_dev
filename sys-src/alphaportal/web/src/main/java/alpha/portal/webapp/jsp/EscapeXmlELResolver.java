@@ -1,31 +1,28 @@
-/*
-Copyright (c) 2010, Chin Huang
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
- * Redistributions of source code must retain the above copyright notice,
-   this list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+/**************************************************************************
+ * alpha-Portal: A web portal, for managing knowledge-driven 
+ * ad-hoc processes, in form of case files.
+ * ==============================================
+ * Copyright (C) 2011-2012 by 
+ *   - Christoph P. Neumann (http://www.chr15t0ph.de)
+ *   - and the SWAT 2011 team
+ **************************************************************************
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and 
+ * limitations under the License.
+ **************************************************************************
+ * $Id$
+ *************************************************************************/
 package alpha.portal.webapp.jsp;
 
 import java.beans.FeatureDescriptor;
 import java.util.Iterator;
+
 import javax.el.ELContext;
 import javax.el.ELException;
 import javax.el.ELResolver;
@@ -33,78 +30,130 @@ import javax.el.PropertyNotFoundException;
 import javax.el.PropertyNotWritableException;
 
 /**
+ * The Class EscapeXmlELResolver.
+ * 
  * {@link ELResolver} which escapes XML in String values.
  */
 public class EscapeXmlELResolver extends ELResolver {
 
-    private ELResolver originalResolver;
-    private ThreadLocal<Boolean> gettingValue = new ThreadLocal<Boolean>() {
-        @Override
-        protected Boolean initialValue() {
-            return Boolean.FALSE;
-        }
-    };
-    
-    private ELResolver getOriginalResolver(ELContext context) {
-        if (originalResolver == null) {
-            originalResolver = context.getELResolver();
-        }
-        return originalResolver;
-    }
-    
-    @Override
-    public Class<?> getCommonPropertyType(ELContext context, Object base) {
-        return getOriginalResolver(context).getCommonPropertyType(context, base);
-    }
+	/** The original resolver. */
+	private ELResolver originalResolver;
 
-    @Override
-    public Iterator<FeatureDescriptor> getFeatureDescriptors(
-            ELContext context, Object base)
-    {
-        return getOriginalResolver(context).getFeatureDescriptors(context, base);
-    }
+	/** The getting value. */
+	private final ThreadLocal<Boolean> gettingValue = new ThreadLocal<Boolean>() {
+		@Override
+		protected Boolean initialValue() {
+			return Boolean.FALSE;
+		}
+	};
 
-    @Override
-    public Class<?> getType(ELContext context, Object base, Object property)
-        throws NullPointerException, PropertyNotFoundException, ELException
-    {
-        return getOriginalResolver(context).getType(context, base, property);
-    }
+	/**
+	 * Gets the original resolver.
+	 * 
+	 * @param context
+	 *            the context
+	 * @return the original resolver
+	 */
+	private ELResolver getOriginalResolver(final ELContext context) {
+		if (this.originalResolver == null) {
+			this.originalResolver = context.getELResolver();
+		}
+		return this.originalResolver;
+	}
 
-    @Override
-    public Object getValue(ELContext context, Object base, Object property)
-        throws NullPointerException, PropertyNotFoundException, ELException
-    {
-        if (gettingValue.get()) {
-            return null;
-        }
-        
-        // This resolver is in the original resolver chain.  When this resolver
-        // invokes the original resolver chain, set a flag so when execution
-        // reaches this resolver, act like this resolver is not in the chain.
-        gettingValue.set(true);
-        Object value =
-                getOriginalResolver(context).getValue(context, base, property);
-        gettingValue.set(false);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.el.ELResolver#getCommonPropertyType(javax.el.ELContext,
+	 * java.lang.Object)
+	 */
+	@Override
+	public Class<?> getCommonPropertyType(final ELContext context,
+			final Object base) {
+		return this.getOriginalResolver(context).getCommonPropertyType(context,
+				base);
+	}
 
-        if (value instanceof String) {
-            value = EscapeXml.escape((String) value);
-        }
-        return value;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.el.ELResolver#getFeatureDescriptors(javax.el.ELContext,
+	 * java.lang.Object)
+	 */
+	@Override
+	public Iterator<FeatureDescriptor> getFeatureDescriptors(
+			final ELContext context, final Object base) {
+		return this.getOriginalResolver(context).getFeatureDescriptors(context,
+				base);
+	}
 
-    @Override
-    public boolean isReadOnly(ELContext context, Object base, Object property)
-        throws NullPointerException, PropertyNotFoundException, ELException
-    {
-        return getOriginalResolver(context).isReadOnly(context, base, property);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.el.ELResolver#getType(javax.el.ELContext, java.lang.Object,
+	 * java.lang.Object)
+	 */
+	@Override
+	public Class<?> getType(final ELContext context, final Object base,
+			final Object property) throws NullPointerException,
+			PropertyNotFoundException, ELException {
+		return this.getOriginalResolver(context).getType(context, base,
+				property);
+	}
 
-    @Override
-    public void setValue(
-            ELContext context, Object base, Object property, Object value)
-        throws NullPointerException, PropertyNotFoundException, PropertyNotWritableException, ELException
-    {
-        getOriginalResolver(context).setValue(context, base, property, value);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.el.ELResolver#getValue(javax.el.ELContext, java.lang.Object,
+	 * java.lang.Object)
+	 */
+	@Override
+	public Object getValue(final ELContext context, final Object base,
+			final Object property) throws NullPointerException,
+			PropertyNotFoundException, ELException {
+		if (this.gettingValue.get())
+			return null;
+
+		// This resolver is in the original resolver chain. When this resolver
+		// invokes the original resolver chain, set a flag so when execution
+		// reaches this resolver, act like this resolver is not in the chain.
+		this.gettingValue.set(true);
+		Object value = this.getOriginalResolver(context).getValue(context,
+				base, property);
+		this.gettingValue.set(false);
+
+		if (value instanceof String) {
+			value = EscapeXml.escape((String) value);
+		}
+		return value;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.el.ELResolver#isReadOnly(javax.el.ELContext, java.lang.Object,
+	 * java.lang.Object)
+	 */
+	@Override
+	public boolean isReadOnly(final ELContext context, final Object base,
+			final Object property) throws NullPointerException,
+			PropertyNotFoundException, ELException {
+		return this.getOriginalResolver(context).isReadOnly(context, base,
+				property);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.el.ELResolver#setValue(javax.el.ELContext, java.lang.Object,
+	 * java.lang.Object, java.lang.Object)
+	 */
+	@Override
+	public void setValue(final ELContext context, final Object base,
+			final Object property, final Object value)
+			throws NullPointerException, PropertyNotFoundException,
+			PropertyNotWritableException, ELException {
+		this.getOriginalResolver(context).setValue(context, base, property,
+				value);
+	}
 }

@@ -1,3 +1,23 @@
+/**************************************************************************
+ * alpha-Portal: A web portal, for managing knowledge-driven 
+ * ad-hoc processes, in form of case files.
+ * ==============================================
+ * Copyright (C) 2011-2012 by 
+ *   - Christoph P. Neumann (http://www.chr15t0ph.de)
+ *   - and the SWAT 2011 team
+ **************************************************************************
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and 
+ * limitations under the License.
+ **************************************************************************
+ * $Id$
+ *************************************************************************/
 package alpha.portal.webapp.controller;
 
 import java.util.Locale;
@@ -24,86 +44,124 @@ import alpha.portal.webapp.util.RequestUtil;
 
 /**
  * Controller to signup new users.
- *
+ * 
  * @author <a href="mailto:matt@raibledesigns.com">Matt Raible</a>
  */
 @Controller
 @RequestMapping("/signup*")
 public class SignupController extends BaseFormController {
-    private RoleManager roleManager;
 
-    @Autowired
-    public void setRoleManager(RoleManager roleManager) {
-        this.roleManager = roleManager;
-    }
+	/** The role manager. */
+	private RoleManager roleManager;
 
-    public SignupController() {
-        setCancelView("redirect:/login");
-        setSuccessView("redirect:/mainMenu");
-    }
+	/**
+	 * Sets the role manager.
+	 * 
+	 * @param roleManager
+	 *            the new role manager
+	 */
+	@Autowired
+	public void setRoleManager(final RoleManager roleManager) {
+		this.roleManager = roleManager;
+	}
 
-    @ModelAttribute
-    @RequestMapping(method = RequestMethod.GET)
-    public User showForm() {
-        return new User();  
-    }
+	/**
+	 * Instantiates a new signup controller.
+	 */
+	public SignupController() {
+		this.setCancelView("redirect:/login");
+		this.setSuccessView("redirect:/mainMenu");
+	}
 
-    @RequestMapping(method = RequestMethod.POST)
-    public String onSubmit(User user, BindingResult errors, HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        if (request.getParameter("cancel") != null) {
-            return getCancelView();
-        }
+	/**
+	 * Show form.
+	 * 
+	 * @return the user
+	 */
+	@ModelAttribute
+	@RequestMapping(method = RequestMethod.GET)
+	public User showForm() {
+		return new User();
+	}
 
-        if (log.isDebugEnabled()) {
-            log.debug("entering 'onSubmit' method...");
-        }
-        Locale locale = request.getLocale();
-        
-        user.setEnabled(true);
+	/**
+	 * On submit.
+	 * 
+	 * @param user
+	 *            the user
+	 * @param errors
+	 *            the errors
+	 * @param request
+	 *            the request
+	 * @param response
+	 *            the response
+	 * @return the string
+	 * @throws Exception
+	 *             the exception
+	 */
+	@RequestMapping(method = RequestMethod.POST)
+	public String onSubmit(final User user, final BindingResult errors,
+			final HttpServletRequest request, final HttpServletResponse response)
+			throws Exception {
+		if (request.getParameter("cancel") != null)
+			return this.getCancelView();
 
-        // Set the default user role on this new user
-        user.addRole(roleManager.getRole(Constants.USER_ROLE));
+		if (this.log.isDebugEnabled()) {
+			this.log.debug("entering 'onSubmit' method...");
+		}
+		final Locale locale = request.getLocale();
 
-        try {
-            this.getUserManager().saveUser(user);
-        } catch (AccessDeniedException ade) {
-            // thrown by UserSecurityAdvice configured in aop:advisor userManagerSecurity
-            log.warn(ade.getMessage());
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return null; 
-        } catch (UserExistsException e) {
-            errors.rejectValue("username", "errors.existing.user",
-                    new Object[]{user.getUsername(), user.getEmail()}, "duplicate user");
+		user.setEnabled(true);
 
-            // redisplay the unencrypted passwords
-            user.setPassword(user.getConfirmPassword());
-            return "signup";
-        }
+		// Set the default user role on this new user
+		user.addRole(this.roleManager.getRole(Constants.USER_ROLE));
 
-        saveMessage(request, getText("user.registered", user.getUsername(), locale));
-        request.getSession().setAttribute(Constants.REGISTERED, Boolean.TRUE);
+		try {
+			this.getUserManager().saveUser(user);
+		} catch (final AccessDeniedException ade) {
+			// thrown by UserSecurityAdvice configured in aop:advisor
+			// userManagerSecurity
+			this.log.warn(ade.getMessage());
+			response.sendError(HttpServletResponse.SC_FORBIDDEN);
+			return null;
+		} catch (final UserExistsException e) {
+			errors.rejectValue("username", "errors.existing.user",
+					new Object[] { user.getUsername(), user.getEmail() },
+					"duplicate user");
 
-        // log user in automatically
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                user.getUsername(), user.getConfirmPassword(), user.getAuthorities());
-        auth.setDetails(user);
-        SecurityContextHolder.getContext().setAuthentication(auth);
+			// redisplay the unencrypted passwords
+			user.setPassword(user.getConfirmPassword());
+			return "signup";
+		}
 
-        // Send user an e-mail
-        if (log.isDebugEnabled()) {
-            log.debug("Sending user '" + user.getUsername() + "' an account information e-mail");
-        }
+		this.saveMessage(request,
+				this.getText("user.registered", user.getUsername(), locale));
+		request.getSession().setAttribute(Constants.REGISTERED, Boolean.TRUE);
 
-        // Send an account information e-mail
-        message.setSubject(getText("signup.email.subject", locale));
+		// log user in automatically
+		final UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+				user.getUsername(), user.getConfirmPassword(),
+				user.getAuthorities());
+		auth.setDetails(user);
+		SecurityContextHolder.getContext().setAuthentication(auth);
 
-        try {
-            sendUserMessage(user, getText("signup.email.message", locale), RequestUtil.getAppURL(request));
-        } catch (MailException me) {
-            saveError(request, me.getMostSpecificCause().getMessage());
-        }
-        
-        return getSuccessView();
-    }
+		// Send user an e-mail
+		if (this.log.isDebugEnabled()) {
+			this.log.debug("Sending user '" + user.getUsername()
+					+ "' an account information e-mail");
+		}
+
+		// Send an account information e-mail
+		this.message.setSubject(this.getText("signup.email.subject", locale));
+
+		try {
+			this.sendUserMessage(user,
+					this.getText("signup.email.message", locale),
+					RequestUtil.getAppURL(request));
+		} catch (final MailException me) {
+			this.saveError(request, me.getMostSpecificCause().getMessage());
+		}
+
+		return this.getSuccessView();
+	}
 }

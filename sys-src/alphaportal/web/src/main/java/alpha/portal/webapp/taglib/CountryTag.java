@@ -1,10 +1,25 @@
+/**************************************************************************
+ * alpha-Portal: A web portal, for managing knowledge-driven 
+ * ad-hoc processes, in form of case files.
+ * ==============================================
+ * Copyright (C) 2011-2012 by 
+ *   - Christoph P. Neumann (http://www.chr15t0ph.de)
+ *   - and the SWAT 2011 team
+ **************************************************************************
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and 
+ * limitations under the License.
+ **************************************************************************
+ * $Id$
+ *************************************************************************/
 package alpha.portal.webapp.taglib;
 
-import org.appfuse.model.LabelValue;
-import org.displaytag.tags.el.ExpressionEvaluator;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 import java.text.Collator;
 import java.util.ArrayList;
@@ -14,197 +29,235 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.TagSupport;
+
+import org.appfuse.model.LabelValue;
+import org.displaytag.tags.el.ExpressionEvaluator;
+
 /**
  * Tag for creating multiple &lt;select&gt; options for displaying a list of
  * country names.
- *
+ * 
  * <p>
  * <b>NOTE</b> - This tag requires a Java2 (JDK 1.2 or later) platform.
  * </p>
- *
+ * 
  * @author Jens Fischer, Matt Raible
  * @version $Revision$ $Date$
- *
+ * 
  * @jsp.tag name="country" bodycontent="empty"
  */
 public class CountryTag extends TagSupport {
-    private static final long serialVersionUID = 3905528206810167095L;
-    private String name;
-    private String prompt;
-    private String scope;
-    private String selected;
 
-    /**
-     * @param name The name to set.
-     *
-     * @jsp.attribute required="false" rtexprvalue="true"
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
+	/** The Constant serialVersionUID. */
+	private static final long serialVersionUID = 3905528206810167095L;
 
-    /**
-     * @param prompt The prompt to set.
-     * @jsp.attribute required="false" rtexprvalue="true"
-     */
-    public void setPrompt(String prompt) {
-        this.prompt = prompt;
-    }
+	/** The name. */
+	private String name;
 
-    /**
-     * @param selected The selected option.
-     * @jsp.attribute required="false" rtexprvalue="true"
-     */
-    public void setDefault(String selected) {
-        this.selected = selected;
-    }
+	/** The prompt. */
+	private String prompt;
 
-    /**
-     * Property used to simply stuff the list of countries into a
-     * specified scope.
-     *
-     * @param scope
-     *
-     * @jsp.attribute required="false" rtexprvalue="true"
-     */
-    public void setToScope(String scope) {
-        this.scope = scope;
-    }
+	/** The scope. */
+	private String scope;
 
-    /**
-     * Process the start of this tag.
-     *
-     * @return int status
-     *
-     * @exception JspException if a JSP exception has occurred
-     *
-     * @see javax.servlet.jsp.tagext.Tag#doStartTag()
-     */
-    public int doStartTag() throws JspException {
-        ExpressionEvaluator eval = new ExpressionEvaluator(this, pageContext);
+	/** The selected. */
+	private String selected;
 
-        if (selected != null) {
-            selected = eval.evalString("default", selected);
-        }
+	/**
+	 * Sets the name.
+	 * 
+	 * @param name
+	 *            The name to set.
+	 * @jsp.attribute required="false" rtexprvalue="true"
+	 */
+	public void setName(final String name) {
+		this.name = name;
+	}
 
-        Locale userLocale = pageContext.getRequest().getLocale();
-        List countries = this.buildCountryList(userLocale);
+	/**
+	 * Sets the prompt.
+	 * 
+	 * @param prompt
+	 *            The prompt to set.
+	 * @jsp.attribute required="false" rtexprvalue="true"
+	 */
+	public void setPrompt(final String prompt) {
+		this.prompt = prompt;
+	}
 
-        if (scope != null) {
-            if (scope.equals("page")) {
-                pageContext.setAttribute(name, countries);
-            } else if (scope.equals("request")) {
-                pageContext.getRequest().setAttribute(name, countries);
-            } else if (scope.equals("session")) {
-                pageContext.getSession().setAttribute(name, countries);
-            } else if (scope.equals("application")) {
-                pageContext.getServletContext().setAttribute(name, countries);
-            } else {
-                throw new JspException("Attribute 'scope' must be: page, request, session or application");
-            }
-        } else {
-            StringBuffer sb = new StringBuffer();
-            sb.append("<select name=\"" + name + "\" id=\"" + name + "\" class=\"select\">\n");
+	/**
+	 * Sets the default.
+	 * 
+	 * @param selected
+	 *            The selected option.
+	 * @jsp.attribute required="false" rtexprvalue="true"
+	 */
+	public void setDefault(final String selected) {
+		this.selected = selected;
+	}
 
-            if (prompt != null) {
-                sb.append("    <option value=\"\" selected=\"selected\">");
-                sb.append(eval.evalString("prompt", prompt) + "</option>\n");
-            }
+	/**
+	 * Property used to simply stuff the list of countries into a specified
+	 * scope.
+	 * 
+	 * @param scope
+	 *            the new to scope
+	 * @jsp.attribute required="false" rtexprvalue="true"
+	 */
+	public void setToScope(final String scope) {
+		this.scope = scope;
+	}
 
-            for (Iterator i = countries.iterator(); i.hasNext();) {
-                LabelValue country = (LabelValue) i.next();
-                sb.append("    <option value=\"" + country.getValue() + "\"");
+	/**
+	 * Process the start of this tag.
+	 * 
+	 * @return int status
+	 * @throws JspException
+	 *             if a JSP exception has occurred
+	 * @see javax.servlet.jsp.tagext.Tag#doStartTag()
+	 */
+	@Override
+	public int doStartTag() throws JspException {
+		final ExpressionEvaluator eval = new ExpressionEvaluator(this,
+				this.pageContext);
 
-                if ((selected != null) && selected.equals(country.getValue())) {
-                    sb.append(" selected=\"selected\"");
-                }
+		if (this.selected != null) {
+			this.selected = eval.evalString("default", this.selected);
+		}
 
-                sb.append(">" + country.getLabel() + "</option>\n");
-            }
+		final Locale userLocale = this.pageContext.getRequest().getLocale();
+		final List countries = this.buildCountryList(userLocale);
 
-            sb.append("</select>");
+		if (this.scope != null) {
+			if (this.scope.equals("page")) {
+				this.pageContext.setAttribute(this.name, countries);
+			} else if (this.scope.equals("request")) {
+				this.pageContext.getRequest()
+						.setAttribute(this.name, countries);
+			} else if (this.scope.equals("session")) {
+				this.pageContext.getSession()
+						.setAttribute(this.name, countries);
+			} else if (this.scope.equals("application")) {
+				this.pageContext.getServletContext().setAttribute(this.name,
+						countries);
+			} else
+				throw new JspException(
+						"Attribute 'scope' must be: page, request, session or application");
+		} else {
+			final StringBuffer sb = new StringBuffer();
+			sb.append("<select name=\"" + this.name + "\" id=\"" + this.name
+					+ "\" class=\"select\">\n");
 
-            try {
-                pageContext.getOut().write(sb.toString());
-            } catch (IOException io) {
-                throw new JspException(io);
-            }
-        }
+			if (this.prompt != null) {
+				sb.append("    <option value=\"\" selected=\"selected\">");
+				sb.append(eval.evalString("prompt", this.prompt)
+						+ "</option>\n");
+			}
 
-        return super.doStartTag();
-    }
+			for (final Iterator i = countries.iterator(); i.hasNext();) {
+				final LabelValue country = (LabelValue) i.next();
+				sb.append("    <option value=\"" + country.getValue() + "\"");
 
-    /**
-     * Release aquired resources to enable tag reusage.
-     *
-     * @see javax.servlet.jsp.tagext.Tag#release()
-     */
-    public void release() {
-        super.release();
-    }
+				if ((this.selected != null)
+						&& this.selected.equals(country.getValue())) {
+					sb.append(" selected=\"selected\"");
+				}
 
-    /**
-     * Build a List of LabelValues for all the available countries. Uses
-     * the two letter uppercase ISO name of the country as the value and the
-     * localized country name as the label.
-     *
-     * @param locale The Locale used to localize the country names.
-     *
-     * @return List of LabelValues for all available countries.
-     */
-    protected List buildCountryList(Locale locale) {
-        final String EMPTY = "";
-        final Locale[] available = Locale.getAvailableLocales();
+				sb.append(">" + country.getLabel() + "</option>\n");
+			}
 
-        List countries = new ArrayList();
+			sb.append("</select>");
 
-        for (int i = 0; i < available.length; i++) {
-            final String iso = available[i].getCountry();
-            final String name = available[i].getDisplayCountry(locale);
+			try {
+				this.pageContext.getOut().write(sb.toString());
+			} catch (final IOException io) {
+				throw new JspException(io);
+			}
+		}
 
-            if (!EMPTY.equals(iso) && !EMPTY.equals(name)) {
-                LabelValue country = new LabelValue(name, iso);
+		return super.doStartTag();
+	}
 
-                if (!countries.contains(country)) {
-                    countries.add(new LabelValue(name, iso));
-                }
-            }
-        }
+	/**
+	 * Release aquired resources to enable tag reusage.
+	 * 
+	 * @see javax.servlet.jsp.tagext.Tag#release()
+	 */
+	@Override
+	public void release() {
+		super.release();
+	}
 
-        Collections.sort(countries, new LabelValueComparator(locale));
+	/**
+	 * Build a List of LabelValues for all the available countries. Uses the two
+	 * letter uppercase ISO name of the country as the value and the localized
+	 * country name as the label.
+	 * 
+	 * @param locale
+	 *            The Locale used to localize the country names.
+	 * 
+	 * @return List of LabelValues for all available countries.
+	 */
+	protected List buildCountryList(final Locale locale) {
+		final String EMPTY = "";
+		final Locale[] available = Locale.getAvailableLocales();
 
-        return countries;
-    }
+		final List countries = new ArrayList();
 
-    /**
-     * Class to compare LabelValues using their labels with
-     * locale-sensitive behaviour.
-     */
-    public class LabelValueComparator implements Comparator {
-        private Comparator c;
+		for (final Locale element : available) {
+			final String iso = element.getCountry();
+			final String name = element.getDisplayCountry(locale);
 
-        /**
-         * Creates a new LabelValueComparator object.
-         *
-         * @param locale The Locale used for localized String comparison.
-         */
-        public LabelValueComparator(Locale locale) {
-            c = Collator.getInstance(locale);
-        }
+			if (!EMPTY.equals(iso) && !EMPTY.equals(name)) {
+				final LabelValue country = new LabelValue(name, iso);
 
-        /**
-         * Compares the localized labels of two LabelValues.
-         *
-         * @param o1 The first LabelValue to compare.
-         * @param o2 The second LabelValue to compare.
-         *
-         * @return The value returned by comparing the localized labels.
-         */
-        public final int compare(Object o1, Object o2) {
-            LabelValue lhs = (LabelValue) o1;
-            LabelValue rhs = (LabelValue) o2;
+				if (!countries.contains(country)) {
+					countries.add(new LabelValue(name, iso));
+				}
+			}
+		}
 
-            return c.compare(lhs.getLabel(), rhs.getLabel());
-        }
-    }
+		Collections.sort(countries, new LabelValueComparator(locale));
+
+		return countries;
+	}
+
+	/**
+	 * Class to compare LabelValues using their labels with locale-sensitive
+	 * behaviour.
+	 */
+	public class LabelValueComparator implements Comparator {
+
+		/** The c. */
+		private final Comparator c;
+
+		/**
+		 * Creates a new LabelValueComparator object.
+		 * 
+		 * @param locale
+		 *            The Locale used for localized String comparison.
+		 */
+		public LabelValueComparator(final Locale locale) {
+			this.c = Collator.getInstance(locale);
+		}
+
+		/**
+		 * Compares the localized labels of two LabelValues.
+		 * 
+		 * @param o1
+		 *            The first LabelValue to compare.
+		 * @param o2
+		 *            The second LabelValue to compare.
+		 * 
+		 * @return The value returned by comparing the localized labels.
+		 */
+		public final int compare(final Object o1, final Object o2) {
+			final LabelValue lhs = (LabelValue) o1;
+			final LabelValue rhs = (LabelValue) o2;
+
+			return this.c.compare(lhs.getLabel(), rhs.getLabel());
+		}
+	}
 }

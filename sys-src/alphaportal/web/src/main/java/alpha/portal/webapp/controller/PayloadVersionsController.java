@@ -1,3 +1,23 @@
+/**************************************************************************
+ * alpha-Portal: A web portal, for managing knowledge-driven 
+ * ad-hoc processes, in form of case files.
+ * ==============================================
+ * Copyright (C) 2011-2012 by 
+ *   - Christoph P. Neumann (http://www.chr15t0ph.de)
+ *   - and the SWAT 2011 team
+ **************************************************************************
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and 
+ * limitations under the License.
+ **************************************************************************
+ * $Id$
+ *************************************************************************/
 package alpha.portal.webapp.controller;
 
 import java.io.BufferedInputStream;
@@ -26,138 +46,145 @@ import alpha.portal.service.AlphaCardManager;
 import alpha.portal.service.PayloadManager;
 
 /**
- * Shows all payload versions; only to contributor!
- * 
+ * Shows all payload versions; only to contributor!.
  */
 
 @Controller
 @RequestMapping("/payloadVersions*")
 public class PayloadVersionsController extends BaseFormController {
 
-    /**
-     * the PayloadManager
-     * 
-     * @see PayloadManager PayloadManager
-     */
-    @Autowired
-    private PayloadManager payloadManager;
+	/** the PayloadManager. @see PayloadManager PayloadManager */
+	@Autowired
+	private PayloadManager payloadManager;
 
-    /**
-     * the AlphaCardManager
-     * 
-     * @see AlphaCardManager AlphaCardManager
-     */
-    @Autowired
-    private AlphaCardManager alphaCardManager;
+	/** the AlphaCardManager. @see AlphaCardManager AlphaCardManager */
+	@Autowired
+	private AlphaCardManager alphaCardManager;
 
-    /**
-     * shows the list of payload versions
-     * 
-     * @param request
-     * 
-     * @return ModelView
-     * 
-     * @throws Exception
-     */
-    @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView handleRequest(HttpServletRequest request)
-            throws Exception {
+	/**
+	 * shows the list of payload versions.
+	 * 
+	 * @param request
+	 *            the request
+	 * @return ModelView
+	 * @throws Exception
+	 *             the exception
+	 */
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView handleRequest(final HttpServletRequest request)
+			throws Exception {
 
-        ModelAndView returnMaV = new ModelAndView();
+		final ModelAndView returnMaV = new ModelAndView();
 
-        User currentUser = getUserManager().getUserByUsername(
-                request.getRemoteUser());
-        Locale locale = request.getLocale();
+		final User currentUser = this.getUserManager().getUserByUsername(
+				request.getRemoteUser());
+		final Locale locale = request.getLocale();
 
-        if (request.getParameter("card") == null
-                || request.getParameter("case") == null) {
-            saveError(request, getText("payloadVersions.cardNotFound", locale));
-            returnMaV.addObject("isErrors", true);
-            return returnMaV;
-        }
-        String cardId = request.getParameter("card");
-        String caseId = request.getParameter("case");
+		if ((request.getParameter("card") == null)
+				|| (request.getParameter("case") == null)) {
+			this.saveError(request,
+					this.getText("payloadVersions.cardNotFound", locale));
+			returnMaV.addObject("isErrors", true);
+			return returnMaV;
+		}
+		final String cardId = request.getParameter("card");
+		final String caseId = request.getParameter("case");
 
-        AlphaCard currentCard = alphaCardManager.get(new AlphaCardIdentifier(
-                caseId, cardId));
-        if (currentCard == null) {
-            saveError(request, getText("payloadVersions.cardNotFound", locale));
-            returnMaV.addObject("isErrors", true);
-            return returnMaV;
-        }
+		final AlphaCard currentCard = this.alphaCardManager
+				.get(new AlphaCardIdentifier(caseId, cardId));
+		if (currentCard == null) {
+			this.saveError(request,
+					this.getText("payloadVersions.cardNotFound", locale));
+			returnMaV.addObject("isErrors", true);
+			return returnMaV;
+		}
 
-        Long cardContributor = null;
-        try {
-            cardContributor = Long.parseLong(currentCard
-                    .getAlphaCardDescriptor().getAdornment(
-                            AdornmentType.Contributor.getName()).getValue());
-        } catch (NumberFormatException e) {
-            cardContributor = 0L;
-        }
-        Long currentUserId = currentUser.getId();
-        if (cardContributor != currentUserId) {
-            saveError(request, getText("adornment.noAccess", locale));
-            returnMaV.addObject("isErrors", true);
-            return returnMaV;
-        }
+		Long cardContributor = null;
+		try {
+			cardContributor = Long.parseLong(currentCard
+					.getAlphaCardDescriptor()
+					.getAdornment(AdornmentType.Contributor.getName())
+					.getValue());
+		} catch (final NumberFormatException e) {
+			cardContributor = 0L;
+		}
+		final Long currentUserId = currentUser.getId();
+		if (cardContributor != currentUserId) {
+			this.saveError(request, this.getText("adornment.noAccess", locale));
+			returnMaV.addObject("isErrors", true);
+			return returnMaV;
+		}
 
-        List<Payload> payloads = payloadManager.getAllVersions(currentCard
-                .getPayload());
-        if (payloads.size() < 1) {
-            saveError(request, getText("payloadVersions.noPayloads", locale));
-            returnMaV.addObject("isErrors", true);
-            return returnMaV;
-        }
+		final List<Payload> payloads = this.payloadManager
+				.getAllVersions(currentCard.getPayload());
+		if (payloads.size() < 1) {
+			this.saveError(request,
+					this.getText("payloadVersions.noPayloads", locale));
+			returnMaV.addObject("isErrors", true);
+			return returnMaV;
+		}
 
-        returnMaV.addObject("payloadList", payloads);
-        returnMaV.addObject("cardName", currentCard.getAlphaCardDescriptor()
-                .getTitle());
-        returnMaV.addObject("caseId", currentCard.getAlphaCardIdentifier()
-                .getCaseId());
-        returnMaV.addObject("cardId", currentCard.getAlphaCardIdentifier()
-                .getCardId());
+		returnMaV.addObject("payloadList", payloads);
+		returnMaV.addObject("cardName", currentCard.getAlphaCardDescriptor()
+				.getTitle());
+		returnMaV.addObject("caseId", currentCard.getAlphaCardIdentifier()
+				.getCaseId());
+		returnMaV.addObject("cardId", currentCard.getAlphaCardIdentifier()
+				.getCardId());
 
-        return returnMaV;
-    }
+		return returnMaV;
+	}
 
-    @RequestMapping(method = RequestMethod.GET, params = { "seqNumber" })
-    public String getPayload(final HttpServletRequest request,
-            final HttpServletResponse response) throws IOException {
-        Locale locale = request.getLocale();
-        if (request.getParameter("card") == null
-                || request.getParameter("case") == null) {
-            saveError(request, getText("payloadVersions.cardNotFound", locale));
-            return "";
-        }
-        String cardId = request.getParameter("card");
-        String caseId = request.getParameter("case");
+	/**
+	 * Gets the payload.
+	 * 
+	 * @param request
+	 *            the request
+	 * @param response
+	 *            the response
+	 * @return the payload
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	@RequestMapping(method = RequestMethod.GET, params = { "seqNumber" })
+	public String getPayload(final HttpServletRequest request,
+			final HttpServletResponse response) throws IOException {
+		final Locale locale = request.getLocale();
+		if ((request.getParameter("card") == null)
+				|| (request.getParameter("case") == null)) {
+			this.saveError(request,
+					this.getText("payloadVersions.cardNotFound", locale));
+			return "";
+		}
+		final String cardId = request.getParameter("card");
+		final String caseId = request.getParameter("case");
 
-        AlphaCard currentCard = alphaCardManager.get(new AlphaCardIdentifier(
-                caseId, cardId));
-        final Payload payload = payloadManager
-                .getVersion(new PayloadIdentifier(currentCard.getPayload()
-                        .getPayloadIdentifier().getPayloadId(), Long
-                        .parseLong(request.getParameter("seqNumber"))));
+		final AlphaCard currentCard = this.alphaCardManager
+				.get(new AlphaCardIdentifier(caseId, cardId));
+		final Payload payload = this.payloadManager
+				.getVersion(new PayloadIdentifier(currentCard.getPayload()
+						.getPayloadIdentifier().getPayloadId(), Long
+						.parseLong(request.getParameter("seqNumber"))));
 
-        if (payload != null) {
+		if (payload != null) {
 
-            final BufferedInputStream in = new BufferedInputStream(
-                    new ByteArrayInputStream(payload.getContent()));
+			final BufferedInputStream in = new BufferedInputStream(
+					new ByteArrayInputStream(payload.getContent()));
 
-            response.setBufferSize(payload.getContent().length);
-            response.setContentType(payload.getMimeType());
-            response.setHeader("Content-Disposition", "attachment; filename=\""
-                    + payload.getFilename() + "\"");
-            response.setContentLength(payload.getContent().length);
+			response.setBufferSize(payload.getContent().length);
+			response.setContentType(payload.getMimeType());
+			response.setHeader("Content-Disposition", "attachment; filename=\""
+					+ payload.getFilename() + "\"");
+			response.setContentLength(payload.getContent().length);
 
-            FileCopyUtils.copy(in, response.getOutputStream());
-            in.close();
-            response.getOutputStream().flush();
-            response.getOutputStream().close();
-        }
+			FileCopyUtils.copy(in, response.getOutputStream());
+			in.close();
+			response.getOutputStream().flush();
+			response.getOutputStream().close();
+		}
 
-        return "redirect:/payloadVersions?case="
-                + currentCard.getAlphaCardIdentifier().getCaseId() + "&card="
-                + currentCard.getAlphaCardIdentifier().getCardId();
-    }
+		return "redirect:/payloadVersions?case="
+				+ currentCard.getAlphaCardIdentifier().getCaseId() + "&card="
+				+ currentCard.getAlphaCardIdentifier().getCardId();
+	}
 }

@@ -1,201 +1,301 @@
+/**************************************************************************
+ * alpha-Portal: A web portal, for managing knowledge-driven 
+ * ad-hoc processes, in form of case files.
+ * ==============================================
+ * Copyright (C) 2011-2012 by 
+ *   - Christoph P. Neumann (http://www.chr15t0ph.de)
+ *   - and the SWAT 2011 team
+ **************************************************************************
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and 
+ * limitations under the License.
+ **************************************************************************
+ * $Id$
+ *************************************************************************/
 package alpha.portal.model;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * The Class AdornmentRulesTest.
+ */
 public class AdornmentRulesTest {
-    String testCaseId = "myTestCaseId";
-    String testCardId = "myTestCardId";
-    AlphaCardDescriptor testDescriptor;
-    AlphaCard testAlphaCard;
-    Adornment newAd;
-    Adornment oldAd;
-    Set<Adornment> adornmentList;
-    Payload payload;
 
-    @Before
-    public void setUp() {
-        testDescriptor = new AlphaCardDescriptor(testCaseId, testCardId);
-        testDescriptor.setAdornment("1", AdornmentTypeVisibility.PRIVATE.value());
-        testDescriptor.setAdornment("2", AdornmentTypeValidity.INVALID.value());
-        testDescriptor.setAdornment("3", AdornmentTypeDeleted.FALSE.value());
-        testAlphaCard = new AlphaCard(testDescriptor);
-        adornmentList = testAlphaCard.getAlphaCardDescriptor().getAllAdornments();
-        payload = new Payload();
-    }
+	/** The test case id. */
+	String testCaseId = "myTestCaseId";
 
-    @Test
-    public void testBasics() {
-        Adornment newAdornment = new Adornment("gibtsnicht");
-        assertTrue(AdornmentRules.applyRules(testAlphaCard, newAdornment));
+	/** The test card id. */
+	String testCardId = "myTestCardId";
 
-        newAdornment = new Adornment(AdornmentType.Visibility.getName());
-        newAdornment.setValue("falscherwert");
-        assertFalse(AdornmentRules.applyRules(testAlphaCard, newAdornment));
-    }
+	/** The test descriptor. */
+	AlphaCardDescriptor testDescriptor;
 
-    @Test
-    public void testApplyRulesVisibility() {
-        newAd = new Adornment(AdornmentType.Visibility.getName());
-        newAd.setValue(AdornmentTypeVisibility.PRIVATE.value());
-        testAlphaCard.getAlphaCardDescriptor().setAdornment(newAd);
-        newAd = null;
+	/** The test alpha card. */
+	AlphaCard testAlphaCard;
 
-        newAd = new Adornment(AdornmentType.Visibility.getName());
-        newAd.setValue(AdornmentTypeVisibility.PRIVATE.value());
-        assertTrue(AdornmentRules.applyRules(testAlphaCard, newAd));
+	/** The new ad. */
+	Adornment newAd;
 
-        newAd.setValue(AdornmentTypeVisibility.PUBLIC.value());
-        assertTrue(AdornmentRules.applyRules(testAlphaCard, newAd));
-        testAlphaCard.getAlphaCardDescriptor().setAdornment(newAd);
+	/** The old ad. */
+	Adornment oldAd;
 
-        newAd.setValue(AdornmentTypeVisibility.PRIVATE.value());
-        assertFalse(AdornmentRules.applyRules(testAlphaCard, newAd));
+	/** The adornment list. */
+	Set<Adornment> adornmentList;
 
-    }
+	/** The payload. */
+	Payload payload;
 
-    @Test
-    public void testApplyRulesValidity() {
-        newAd = new Adornment(AdornmentType.Validity.getName());
-        newAd.setValue(AdornmentTypeValidity.INVALID.value());
-        testAlphaCard.getAlphaCardDescriptor().setAdornment(newAd);
-        newAd = null;
+	/**
+	 * Sets the up.
+	 */
+	@Before
+	public void setUp() {
+		this.testDescriptor = new AlphaCardDescriptor(this.testCaseId,
+				this.testCardId);
+		this.testDescriptor.setAdornment("1",
+				AdornmentTypeVisibility.PRIVATE.value());
+		this.testDescriptor.setAdornment("2",
+				AdornmentTypeValidity.INVALID.value());
+		this.testDescriptor.setAdornment("3",
+				AdornmentTypeDeleted.FALSE.value());
+		this.testAlphaCard = new AlphaCard(this.testDescriptor);
+		this.adornmentList = this.testAlphaCard.getAlphaCardDescriptor()
+				.getAllAdornments();
+		this.payload = new Payload();
+	}
 
-        newAd = new Adornment(AdornmentType.Validity.getName());
-        newAd.setValue(AdornmentTypeValidity.INVALID.value());
-        assertTrue(AdornmentRules.applyRules(testAlphaCard, newAd));
+	/**
+	 * Test basics.
+	 */
+	@Test
+	public void testBasics() {
+		Adornment newAdornment = new Adornment("gibtsnicht");
+		Assert.assertTrue(AdornmentRules.applyRules(this.testAlphaCard,
+				newAdornment));
 
-        newAd.setValue(AdornmentTypeValidity.VALID.value());
-        assertTrue(AdornmentRules.applyRules(testAlphaCard, newAd));
-        testAlphaCard.getAlphaCardDescriptor().setAdornment(newAd);
+		newAdornment = new Adornment(AdornmentType.Visibility.getName());
+		newAdornment.setValue("falscherwert");
+		Assert.assertFalse(AdornmentRules.applyRules(this.testAlphaCard,
+				newAdornment));
+	}
 
-        newAd.setValue(AdornmentTypeValidity.INVALID.value());
-        assertFalse(AdornmentRules.applyRules(testAlphaCard, newAd));
-    }
+	/**
+	 * Test apply rules visibility.
+	 */
+	@Test
+	public void testApplyRulesVisibility() {
+		this.newAd = new Adornment(AdornmentType.Visibility.getName());
+		this.newAd.setValue(AdornmentTypeVisibility.PRIVATE.value());
+		this.testAlphaCard.getAlphaCardDescriptor().setAdornment(this.newAd);
+		this.newAd = null;
 
-    @Test
-    public void testDataProvisionStatus() {
-        testAlphaCard.getAlphaCardDescriptor().setAdornment(AdornmentType.Validity.name(),
-                AdornmentTypeValidity.INVALID.name());
-        testAlphaCard.getAlphaCardDescriptor().setAdornment(AdornmentType.Visibility.name(),
-                AdornmentTypeVisibility.PRIVATE.name());
-        assertEquals(AdornmentTypeDataProvision.OPEN.value(), AdornmentRules.getDataProvisionStatus(testAlphaCard));
+		this.newAd = new Adornment(AdornmentType.Visibility.getName());
+		this.newAd.setValue(AdornmentTypeVisibility.PRIVATE.value());
+		Assert.assertTrue(AdornmentRules.applyRules(this.testAlphaCard,
+				this.newAd));
 
-        testAlphaCard.setPayload(new Payload());
-        assertEquals(AdornmentTypeDataProvision.INPROGRESS.value(), AdornmentRules
-                .getDataProvisionStatus(testAlphaCard));
+		this.newAd.setValue(AdornmentTypeVisibility.PUBLIC.value());
+		Assert.assertTrue(AdornmentRules.applyRules(this.testAlphaCard,
+				this.newAd));
+		this.testAlphaCard.getAlphaCardDescriptor().setAdornment(this.newAd);
 
-        Payload dummyPayload = new Payload("test", "test/mime");
-        dummyPayload.setContent("some test data".getBytes());
-        testAlphaCard.setPayload(dummyPayload);
-        testAlphaCard.getAlphaCardDescriptor().setAdornment(AdornmentType.Validity.getName(),
-                AdornmentTypeValidity.VALID.value());
-        testAlphaCard.getAlphaCardDescriptor().setAdornment(AdornmentType.Visibility.getName(),
-                AdornmentTypeVisibility.PUBLIC.value());
-        assertEquals(AdornmentTypeDataProvision.FULLFILLED.value(), AdornmentRules
-                .getDataProvisionStatus(testAlphaCard));
+		this.newAd.setValue(AdornmentTypeVisibility.PRIVATE.value());
+		Assert.assertFalse(AdornmentRules.applyRules(this.testAlphaCard,
+				this.newAd));
 
-    }
+	}
 
-    @Test
-    public void testApplyRulesPayloadVersion() {
-        String oldVersion = "3";
-        String newVersion = "4";
+	/**
+	 * Test apply rules validity.
+	 */
+	@Test
+	public void testApplyRulesValidity() {
+		this.newAd = new Adornment(AdornmentType.Validity.getName());
+		this.newAd.setValue(AdornmentTypeValidity.INVALID.value());
+		this.testAlphaCard.getAlphaCardDescriptor().setAdornment(this.newAd);
+		this.newAd = null;
 
-        oldAd = new Adornment(AdornmentType.PayloadVersionNumber.getName());
-        oldAd.setValue(oldVersion);
+		this.newAd = new Adornment(AdornmentType.Validity.getName());
+		this.newAd.setValue(AdornmentTypeValidity.INVALID.value());
+		Assert.assertTrue(AdornmentRules.applyRules(this.testAlphaCard,
+				this.newAd));
 
-        testAlphaCard.getAlphaCardDescriptor().setAdornment(oldAd);
+		this.newAd.setValue(AdornmentTypeValidity.VALID.value());
+		Assert.assertTrue(AdornmentRules.applyRules(this.testAlphaCard,
+				this.newAd));
+		this.testAlphaCard.getAlphaCardDescriptor().setAdornment(this.newAd);
 
-        newAd = new Adornment(AdornmentType.PayloadVersionNumber.getName());
-        newAd.setValue(newVersion);
+		this.newAd.setValue(AdornmentTypeValidity.INVALID.value());
+		Assert.assertFalse(AdornmentRules.applyRules(this.testAlphaCard,
+				this.newAd));
+	}
 
-        boolean success = AdornmentRules.applyRules(testAlphaCard, newAd);
+	/**
+	 * Test data provision status.
+	 */
+	@Test
+	public void testDataProvisionStatus() {
+		this.testAlphaCard.getAlphaCardDescriptor().setAdornment(
+				AdornmentType.Validity.name(),
+				AdornmentTypeValidity.INVALID.name());
+		this.testAlphaCard.getAlphaCardDescriptor().setAdornment(
+				AdornmentType.Visibility.name(),
+				AdornmentTypeVisibility.PRIVATE.name());
+		Assert.assertEquals(AdornmentTypeDataProvision.OPEN.value(),
+				AdornmentRules.getDataProvisionStatus(this.testAlphaCard));
 
-        assertFalse(success);
-    }
+		this.testAlphaCard.setPayload(new Payload());
+		Assert.assertEquals(AdornmentTypeDataProvision.INPROGRESS.value(),
+				AdornmentRules.getDataProvisionStatus(this.testAlphaCard));
 
-    @Test
-    public void testApplyRulesDeleted() {
-        oldAd = new Adornment(AdornmentType.Visibility.getName());
-        oldAd.setValue(AdornmentTypeVisibility.PUBLIC.value());
+		final Payload dummyPayload = new Payload("test", "test/mime");
+		dummyPayload.setContent("some test data".getBytes());
+		this.testAlphaCard.setPayload(dummyPayload);
+		this.testAlphaCard.getAlphaCardDescriptor().setAdornment(
+				AdornmentType.Validity.getName(),
+				AdornmentTypeValidity.VALID.value());
+		this.testAlphaCard.getAlphaCardDescriptor().setAdornment(
+				AdornmentType.Visibility.getName(),
+				AdornmentTypeVisibility.PUBLIC.value());
+		Assert.assertEquals(AdornmentTypeDataProvision.FULLFILLED.value(),
+				AdornmentRules.getDataProvisionStatus(this.testAlphaCard));
 
-        testAlphaCard.getAlphaCardDescriptor().setAdornment(oldAd);
+	}
 
-        newAd = new Adornment(AdornmentType.Deleted.getName());
-        newAd.setValue(AdornmentTypeDeleted.FALSE.value());
-        testAlphaCard.getAlphaCardDescriptor().setAdornment(newAd);
-        assertTrue(AdornmentRules.applyRules(testAlphaCard, newAd));
+	/**
+	 * Test apply rules payload version.
+	 */
+	@Test
+	public void testApplyRulesPayloadVersion() {
+		final String oldVersion = "3";
+		final String newVersion = "4";
 
-        newAd.setValue(AdornmentTypeDeleted.TRUE.value());
-        testAlphaCard.getAlphaCardDescriptor().setAdornment(newAd);
-        assertFalse(AdornmentRules.applyRules(testAlphaCard, oldAd));
+		this.oldAd = new Adornment(AdornmentType.PayloadVersionNumber.getName());
+		this.oldAd.setValue(oldVersion);
 
-        Adornment newAdornment = new Adornment("gibtsnicht");
-        testAlphaCard.getAlphaCardDescriptor().setAdornment(newAdornment);
-        assertFalse(AdornmentRules.applyRules(testAlphaCard, newAdornment));
+		this.testAlphaCard.getAlphaCardDescriptor().setAdornment(this.oldAd);
 
-        newAd = new Adornment(AdornmentType.Deleted.getName());
-        newAd.setValue(AdornmentTypeDeleted.TRUE.value());
-        testAlphaCard.getAlphaCardDescriptor().setAdornment(newAd);
-        assertTrue(AdornmentRules.applyRules(testAlphaCard, newAd));
+		this.newAd = new Adornment(AdornmentType.PayloadVersionNumber.getName());
+		this.newAd.setValue(newVersion);
 
-        // newAd.setValue(AdornmentTypeDeleted.FALSE.value());
-        // assertFalse(AdornmentRules.applyRules(testAlphaCard, newAd));
-    }
+		final boolean success = AdornmentRules.applyRules(this.testAlphaCard,
+				this.newAd);
 
-    @Test
-    public void testApplyRulesWithWrongValues() {
-        Adornment userAd = new Adornment();
-        userAd.setName("myAdornment");
+		Assert.assertFalse(success);
+	}
 
-        boolean success = AdornmentRules.applyRules(testAlphaCard, userAd);
-        assertTrue(success);
+	/**
+	 * Test apply rules deleted.
+	 */
+	@Test
+	public void testApplyRulesDeleted() {
+		this.oldAd = new Adornment(AdornmentType.Visibility.getName());
+		this.oldAd.setValue(AdornmentTypeVisibility.PUBLIC.value());
 
-        Adornment validity = new Adornment(AdornmentType.Visibility.getName());
-        validity.setValue("wrongvalue");
+		this.testAlphaCard.getAlphaCardDescriptor().setAdornment(this.oldAd);
 
-        success = AdornmentRules.applyRules(testAlphaCard, validity);
-        assertFalse(success);
-    }
+		this.newAd = new Adornment(AdornmentType.Deleted.getName());
+		this.newAd.setValue(AdornmentTypeDeleted.FALSE.value());
+		this.testAlphaCard.getAlphaCardDescriptor().setAdornment(this.newAd);
+		Assert.assertTrue(AdornmentRules.applyRules(this.testAlphaCard,
+				this.newAd));
 
-    @Test
-    public void testProvisionalData() {
-        testAlphaCard.getAlphaCardDescriptor().setAdornment(AdornmentType.Visibility.getName(),
-                AdornmentTypeVisibility.PRIVATE.value());
-        testAlphaCard.getAlphaCardDescriptor().setAdornment(AdornmentType.Validity.getName(),
-                AdornmentTypeValidity.INVALID.value());
-        // no payload
-        assertTrue(AdornmentRules.getDataProvisionStatus(testAlphaCard) == AdornmentTypeDataProvision.OPEN.value());
+		this.newAd.setValue(AdornmentTypeDeleted.TRUE.value());
+		this.testAlphaCard.getAlphaCardDescriptor().setAdornment(this.newAd);
+		Assert.assertFalse(AdornmentRules.applyRules(this.testAlphaCard,
+				this.oldAd));
 
-        // payload uploaded
-        testAlphaCard.setPayload(payload);
-        assertTrue(AdornmentRules.getDataProvisionStatus(testAlphaCard) == AdornmentTypeDataProvision.INPROGRESS
-                .value());
+		final Adornment newAdornment = new Adornment("gibtsnicht");
+		this.testAlphaCard.getAlphaCardDescriptor().setAdornment(newAdornment);
+		Assert.assertFalse(AdornmentRules.applyRules(this.testAlphaCard,
+				newAdornment));
 
-        testAlphaCard.getAlphaCardDescriptor().setAdornment(AdornmentType.Visibility.getName(),
-                AdornmentTypeVisibility.PUBLIC.value());
-        assertTrue(AdornmentRules.getDataProvisionStatus(testAlphaCard) == AdornmentTypeDataProvision.INPROGRESS
-                .value());
+		this.newAd = new Adornment(AdornmentType.Deleted.getName());
+		this.newAd.setValue(AdornmentTypeDeleted.TRUE.value());
+		this.testAlphaCard.getAlphaCardDescriptor().setAdornment(this.newAd);
+		Assert.assertTrue(AdornmentRules.applyRules(this.testAlphaCard,
+				this.newAd));
 
-        testAlphaCard.getAlphaCardDescriptor().setAdornment(AdornmentType.Visibility.getName(),
-                AdornmentTypeVisibility.PRIVATE.value());
-        testAlphaCard.getAlphaCardDescriptor().setAdornment(AdornmentType.Validity.getName(),
-                AdornmentTypeValidity.VALID.value());
-        assertTrue(AdornmentRules.getDataProvisionStatus(testAlphaCard) == AdornmentTypeDataProvision.INPROGRESS
-                .value());
+		// newAd.setValue(AdornmentTypeDeleted.FALSE.value());
+		// assertFalse(AdornmentRules.applyRules(testAlphaCard, newAd));
+	}
 
-        testAlphaCard.getAlphaCardDescriptor().setAdornment(AdornmentType.Visibility.getName(),
-                AdornmentTypeVisibility.PUBLIC.value());
-        testAlphaCard.getAlphaCardDescriptor().setAdornment(AdornmentType.Validity.getName(),
-                AdornmentTypeValidity.VALID.value());
-        assertTrue(AdornmentRules.getDataProvisionStatus(testAlphaCard) == AdornmentTypeDataProvision.FULLFILLED
-                .value());
-    }
+	/**
+	 * Test apply rules with wrong values.
+	 */
+	@Test
+	public void testApplyRulesWithWrongValues() {
+		final Adornment userAd = new Adornment();
+		userAd.setName("myAdornment");
+
+		boolean success = AdornmentRules.applyRules(this.testAlphaCard, userAd);
+		Assert.assertTrue(success);
+
+		final Adornment validity = new Adornment(
+				AdornmentType.Visibility.getName());
+		validity.setValue("wrongvalue");
+
+		success = AdornmentRules.applyRules(this.testAlphaCard, validity);
+		Assert.assertFalse(success);
+	}
+
+	/**
+	 * Test provisional data.
+	 */
+	@Test
+	public void testProvisionalData() {
+		this.testAlphaCard.getAlphaCardDescriptor().setAdornment(
+				AdornmentType.Visibility.getName(),
+				AdornmentTypeVisibility.PRIVATE.value());
+		this.testAlphaCard.getAlphaCardDescriptor().setAdornment(
+				AdornmentType.Validity.getName(),
+				AdornmentTypeValidity.INVALID.value());
+		// no payload
+		Assert.assertTrue(AdornmentRules
+				.getDataProvisionStatus(this.testAlphaCard) == AdornmentTypeDataProvision.OPEN
+				.value());
+
+		// payload uploaded
+		this.testAlphaCard.setPayload(this.payload);
+		Assert.assertTrue(AdornmentRules
+				.getDataProvisionStatus(this.testAlphaCard) == AdornmentTypeDataProvision.INPROGRESS
+				.value());
+
+		this.testAlphaCard.getAlphaCardDescriptor().setAdornment(
+				AdornmentType.Visibility.getName(),
+				AdornmentTypeVisibility.PUBLIC.value());
+		Assert.assertTrue(AdornmentRules
+				.getDataProvisionStatus(this.testAlphaCard) == AdornmentTypeDataProvision.INPROGRESS
+				.value());
+
+		this.testAlphaCard.getAlphaCardDescriptor().setAdornment(
+				AdornmentType.Visibility.getName(),
+				AdornmentTypeVisibility.PRIVATE.value());
+		this.testAlphaCard.getAlphaCardDescriptor().setAdornment(
+				AdornmentType.Validity.getName(),
+				AdornmentTypeValidity.VALID.value());
+		Assert.assertTrue(AdornmentRules
+				.getDataProvisionStatus(this.testAlphaCard) == AdornmentTypeDataProvision.INPROGRESS
+				.value());
+
+		this.testAlphaCard.getAlphaCardDescriptor().setAdornment(
+				AdornmentType.Visibility.getName(),
+				AdornmentTypeVisibility.PUBLIC.value());
+		this.testAlphaCard.getAlphaCardDescriptor().setAdornment(
+				AdornmentType.Validity.getName(),
+				AdornmentTypeValidity.VALID.value());
+		Assert.assertTrue(AdornmentRules
+				.getDataProvisionStatus(this.testAlphaCard) == AdornmentTypeDataProvision.FULLFILLED
+				.value());
+	}
 }

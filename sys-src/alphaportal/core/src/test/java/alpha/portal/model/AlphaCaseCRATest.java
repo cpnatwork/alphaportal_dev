@@ -1,47 +1,73 @@
+/**************************************************************************
+ * alpha-Portal: A web portal, for managing knowledge-driven 
+ * ad-hoc processes, in form of case files.
+ * ==============================================
+ * Copyright (C) 2011-2012 by 
+ *   - Christoph P. Neumann (http://www.chr15t0ph.de)
+ *   - and the SWAT 2011 team
+ **************************************************************************
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and 
+ * limitations under the License.
+ **************************************************************************
+ * $Id$
+ *************************************************************************/
 package alpha.portal.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import org.appfuse.model.User;
+import org.junit.Assert;
 import org.junit.Test;
 
+/**
+ * The Class AlphaCaseCRATest.
+ */
 public class AlphaCaseCRATest {
-    @Test
-    public void testBasics() {
-	AlphaCaseCRA cra = new AlphaCaseCRA();
-	assertNotNull(cra.getListOfParticipants());
-	assertEquals(0, cra.getListOfParticipants().size());
 
-	int hash = cra.hashCode();
-	assertTrue(cra.equals(new AlphaCaseCRA()));
-	assertEquals(hash, (new AlphaCaseCRA()).hashCode());
+	/**
+	 * Test basics.
+	 */
+	@Test
+	public void testBasics() {
+		final AlphaCaseCRA cra = new AlphaCaseCRA();
+		Assert.assertNotNull(cra.getListOfParticipants());
+		Assert.assertEquals(0, cra.getListOfParticipants().size());
 
-	String to = cra.toString();
+		final int hash = cra.hashCode();
+		Assert.assertTrue(cra.equals(new AlphaCaseCRA()));
+		Assert.assertEquals(hash, (new AlphaCaseCRA()).hashCode());
 
-	User u = new User();
-	u.setId(123L);
-	cra.addUserToListOfParticipants(u);
-	assertEquals(1, cra.getListOfParticipants().size());
-	assertTrue(cra.getListOfParticipants().contains(u));
+		final String to = cra.toString();
 
-	AlphaCaseCRA cra2 = new AlphaCaseCRA();
-	cra2.addUserToListOfParticipants(u);
-	assertEquals(cra, cra2);
+		final User u = new User();
+		u.setId(123L);
+		cra.addUserToListOfParticipants(u);
+		Assert.assertEquals(1, cra.getListOfParticipants().size());
+		Assert.assertTrue(cra.getListOfParticipants().contains(u));
 
-	cra.removeUserFromListOfParticipants(u);
-	assertEquals(0, cra.getListOfParticipants().size());
-	assertEquals(to, cra.toString());
-	assertEquals(hash, cra.hashCode());
-    }
+		final AlphaCaseCRA cra2 = new AlphaCaseCRA();
+		cra2.addUserToListOfParticipants(u);
+		Assert.assertEquals(cra, cra2);
 
-    @Test
-    public void testEquals() {
-	AlphaCaseCRA cra = new AlphaCaseCRA();
+		cra.removeUserFromListOfParticipants(u);
+		Assert.assertEquals(0, cra.getListOfParticipants().size());
+		Assert.assertEquals(to, cra.toString());
+		Assert.assertEquals(hash, cra.hashCode());
+	}
 
-	assertFalse(cra.equals(new AlphaCard()));
+	/**
+	 * Test equals.
+	 */
+	@Test
+	public void testEquals() {
+		final AlphaCaseCRA cra = new AlphaCaseCRA();
 
-    }
+		Assert.assertFalse(cra.equals(new AlphaCard()));
+
+	}
 }

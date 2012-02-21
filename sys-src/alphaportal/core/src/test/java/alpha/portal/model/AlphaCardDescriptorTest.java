@@ -1,104 +1,137 @@
+/**************************************************************************
+ * alpha-Portal: A web portal, for managing knowledge-driven 
+ * ad-hoc processes, in form of case files.
+ * ==============================================
+ * Copyright (C) 2011-2012 by 
+ *   - Christoph P. Neumann (http://www.chr15t0ph.de)
+ *   - and the SWAT 2011 team
+ **************************************************************************
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and 
+ * limitations under the License.
+ **************************************************************************
+ * $Id$
+ *************************************************************************/
 package alpha.portal.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
+import org.junit.Assert;
 import org.junit.Test;
 
+/**
+ * The Class AlphaCardDescriptorTest.
+ */
 public class AlphaCardDescriptorTest {
-    @Test
-    public void testBasics() {
-        AlphaCard c = new AlphaCard("123-abc");
-        AlphaCardIdentifier id = c.getAlphaCardIdentifier();
-        id.setCardId("987-zxy");
 
-        AlphaCardDescriptor d = new AlphaCardDescriptor();
-        d.setAlphaCard(c);
-        assertEquals(c, d.getAlphaCard());
-        d.setAlphaCardIdentifier(id);
-        assertEquals(id, d.getAlphaCardIdentifier());
+	/**
+	 * Test basics.
+	 */
+	@Test
+	public void testBasics() {
+		final AlphaCard c = new AlphaCard("123-abc");
+		final AlphaCardIdentifier id = c.getAlphaCardIdentifier();
+		id.setCardId("987-zxy");
 
-        int hash = d.hashCode();
+		final AlphaCardDescriptor d = new AlphaCardDescriptor();
+		d.setAlphaCard(c);
+		Assert.assertEquals(c, d.getAlphaCard());
+		d.setAlphaCardIdentifier(id);
+		Assert.assertEquals(id, d.getAlphaCardIdentifier());
 
-        AlphaCardDescriptor d2 = new AlphaCardDescriptor(c);
-        assertEquals(d, d2);
-        AlphaCardDescriptor d3 = new AlphaCardDescriptor(id.getCaseId(), id.getCardId());
-        d3.setAlphaCard(c);
-        assertEquals(d, d3);
+		final int hash = d.hashCode();
 
-        assertEquals(hash, d3.hashCode());
+		final AlphaCardDescriptor d2 = new AlphaCardDescriptor(c);
+		Assert.assertEquals(d, d2);
+		final AlphaCardDescriptor d3 = new AlphaCardDescriptor(id.getCaseId(),
+				id.getCardId());
+		d3.setAlphaCard(c);
+		Assert.assertEquals(d, d3);
 
-        AlphaCard f = new AlphaCard("Test-123");
-        AlphaCard g = new AlphaCard("Test-1234");
-        AlphaCardDescriptor acD = new AlphaCardDescriptor();
-        assertNotNull(f.getAlphaCardIdentifier());
-        acD.setAlphaCard(f);
-        assertEquals(f.getAlphaCardIdentifier(), acD.getAlphaCardIdentifier());
-        g.setAlphaCardIdentifier(null);
-        acD.setAlphaCard(g);
-        assertEquals(f.getAlphaCardIdentifier(), acD.getAlphaCardIdentifier());
-        acD.setAlphaCardIdentifier(null);
-        g.setAlphaCardIdentifier(null);
-        acD.setAlphaCard(g);
-    }
+		Assert.assertEquals(hash, d3.hashCode());
 
-    @Test
-    public void testAdornments() throws Exception {
-        AlphaCardDescriptor d = new AlphaCardDescriptor();
-        d.setAlphaCardIdentifier(new AlphaCardIdentifier("123", "987"));
-        assertNotNull(d.getAllAdornments());
-        assertEquals(0, d.getAllAdornments().size());
+		final AlphaCard f = new AlphaCard("Test-123");
+		final AlphaCard g = new AlphaCard("Test-1234");
+		final AlphaCardDescriptor acD = new AlphaCardDescriptor();
+		Assert.assertNotNull(f.getAlphaCardIdentifier());
+		acD.setAlphaCard(f);
+		Assert.assertEquals(f.getAlphaCardIdentifier(),
+				acD.getAlphaCardIdentifier());
+		g.setAlphaCardIdentifier(null);
+		acD.setAlphaCard(g);
+		Assert.assertEquals(f.getAlphaCardIdentifier(),
+				acD.getAlphaCardIdentifier());
+		acD.setAlphaCardIdentifier(null);
+		g.setAlphaCardIdentifier(null);
+		acD.setAlphaCard(g);
+	}
 
-        assertFalse(d.isAdornmentsChanged());
-        d.setAdornment("test", "value");
-        assertTrue(d.isAdornmentsChanged());
-        assertNotNull(d.getAdornment("test"));
-        assertEquals("test", d.getAdornment("test").getName());
-        assertEquals("value", d.getAdornment("test").getValue());
-        assertEquals(1, d.getAllAdornments().size());
+	/**
+	 * Test adornments.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Test
+	public void testAdornments() throws Exception {
+		final AlphaCardDescriptor d = new AlphaCardDescriptor();
+		d.setAlphaCardIdentifier(new AlphaCardIdentifier("123", "987"));
+		Assert.assertNotNull(d.getAllAdornments());
+		Assert.assertEquals(0, d.getAllAdornments().size());
 
-        assertNull(d.getContributor());
-        d.setContributor(123L);
-        assertEquals(123L, d.getContributor().longValue());
-        assertEquals(2, d.getAllAdornments().size());
+		Assert.assertFalse(d.isAdornmentsChanged());
+		d.setAdornment("test", "value");
+		Assert.assertTrue(d.isAdornmentsChanged());
+		Assert.assertNotNull(d.getAdornment("test"));
+		Assert.assertEquals("test", d.getAdornment("test").getName());
+		Assert.assertEquals("value", d.getAdornment("test").getValue());
+		Assert.assertEquals(1, d.getAllAdornments().size());
 
-        d.setAdornment(AdornmentType.Contributor.getName(), "");
-        assertEquals(null, d.getContributor());
-        d.setContributor(123L);
+		Assert.assertNull(d.getContributor());
+		d.setContributor(123L);
+		Assert.assertEquals(123L, d.getContributor().longValue());
+		Assert.assertEquals(2, d.getAllAdornments().size());
 
-        assertEquals("No name", d.getTitle());
-        d.setTitle("test");
-        assertEquals("test", d.getTitle());
+		d.setAdornment(AdornmentType.Contributor.getName(), "");
+		Assert.assertEquals(null, d.getContributor());
+		d.setContributor(123L);
 
-        d.setTitle("test2");
-        assertEquals("test2", d.getTitle());
-        assertEquals(3, d.getAllAdornments().size());
+		Assert.assertEquals("No name", d.getTitle());
+		d.setTitle("test");
+		Assert.assertEquals("test", d.getTitle());
 
-        d.deleteAdornment("test");
-        assertNull(d.getAdornment("test"));
+		d.setTitle("test2");
+		Assert.assertEquals("test2", d.getTitle());
+		Assert.assertEquals(3, d.getAllAdornments().size());
 
-        assertFalse(d.deleteAdornment("geistadornment"));
-    }
+		d.deleteAdornment("test");
+		Assert.assertNull(d.getAdornment("test"));
 
-    @Test
-    public void testEquals() {
-        AlphaCardDescriptor desc = new AlphaCardDescriptor();
-        desc.setAlphaCardIdentifier(new AlphaCardIdentifier("123", "987"));
+		Assert.assertFalse(d.deleteAdornment("geistadornment"));
+	}
 
-        assertFalse(desc.equals(new AlphaCard()));
+	/**
+	 * Test equals.
+	 */
+	@Test
+	public void testEquals() {
+		final AlphaCardDescriptor desc = new AlphaCardDescriptor();
+		desc.setAlphaCardIdentifier(new AlphaCardIdentifier("123", "987"));
 
-        desc.setAdornment("", "wow");
+		Assert.assertFalse(desc.equals(new AlphaCard()));
 
-        try {
-            desc.setTitle("");
-        } catch (Exception e) {
-            fail();
-        }
-        assertEquals("No name", desc.getTitle());
+		desc.setAdornment("", "wow");
 
-    }
+		try {
+			desc.setTitle("");
+		} catch (final Exception e) {
+			Assert.fail();
+		}
+		Assert.assertEquals("No name", desc.getTitle());
+
+	}
 }

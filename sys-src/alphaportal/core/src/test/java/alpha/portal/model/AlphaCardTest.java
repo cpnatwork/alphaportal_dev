@@ -1,158 +1,215 @@
+/**************************************************************************
+ * alpha-Portal: A web portal, for managing knowledge-driven 
+ * ad-hoc processes, in form of case files.
+ * ==============================================
+ * Copyright (C) 2011-2012 by 
+ *   - Christoph P. Neumann (http://www.chr15t0ph.de)
+ *   - and the SWAT 2011 team
+ **************************************************************************
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and 
+ * limitations under the License.
+ **************************************************************************
+ * $Id$
+ *************************************************************************/
 package alpha.portal.model;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
+import org.junit.Assert;
 import org.junit.Test;
 
+/**
+ * The Class AlphaCardTest.
+ */
 public class AlphaCardTest {
 
-    @Test(expected = IllegalStateException.class)
-    public void testAlphaCardAlphaCardDescriptorNullException() {
-	AlphaCardDescriptor testDescriptor = new AlphaCardDescriptor();
-	testDescriptor.setAlphaCardIdentifier(null);
-	@SuppressWarnings("unused")
-	AlphaCard testAlphaCard = new AlphaCard(testDescriptor);
-    }
+	/**
+	 * Test alpha card alpha card descriptor null exception.
+	 */
+	@Test(expected = IllegalStateException.class)
+	public void testAlphaCardAlphaCardDescriptorNullException() {
+		final AlphaCardDescriptor testDescriptor = new AlphaCardDescriptor();
+		testDescriptor.setAlphaCardIdentifier(null);
+		@SuppressWarnings("unused")
+		final AlphaCard testAlphaCard = new AlphaCard(testDescriptor);
+	}
 
-    @Test(expected = IllegalStateException.class)
-    public void testAlphaCardAlphaCardDescriptorCardIdEmptyException() {
-	AlphaCardDescriptor testDescriptor = new AlphaCardDescriptor();
-	testDescriptor.setAlphaCardIdentifier(new AlphaCardIdentifier("test",
-	""));
-	@SuppressWarnings("unused")
-	AlphaCard testAlphaCard = new AlphaCard(testDescriptor);
-    }
+	/**
+	 * Test alpha card alpha card descriptor card id empty exception.
+	 */
+	@Test(expected = IllegalStateException.class)
+	public void testAlphaCardAlphaCardDescriptorCardIdEmptyException() {
+		final AlphaCardDescriptor testDescriptor = new AlphaCardDescriptor();
+		testDescriptor.setAlphaCardIdentifier(new AlphaCardIdentifier("test",
+				""));
+		@SuppressWarnings("unused")
+		final AlphaCard testAlphaCard = new AlphaCard(testDescriptor);
+	}
 
-    @Test(expected = IllegalStateException.class)
-    public void testAlphaCardAlphaCardDescriptorCaseIdEmptyException() {
-	AlphaCardDescriptor testDescriptor = new AlphaCardDescriptor();
-	testDescriptor.setAlphaCardIdentifier(new AlphaCardIdentifier("",
-	"test"));
-	@SuppressWarnings("unused")
-	AlphaCard testAlphaCard = new AlphaCard(testDescriptor);
-    }
+	/**
+	 * Test alpha card alpha card descriptor case id empty exception.
+	 */
+	@Test(expected = IllegalStateException.class)
+	public void testAlphaCardAlphaCardDescriptorCaseIdEmptyException() {
+		final AlphaCardDescriptor testDescriptor = new AlphaCardDescriptor();
+		testDescriptor.setAlphaCardIdentifier(new AlphaCardIdentifier("",
+				"test"));
+		@SuppressWarnings("unused")
+		final AlphaCard testAlphaCard = new AlphaCard(testDescriptor);
+	}
 
-    @Test
-    public void testAlphaCardAlphaCardDescriptor() {
-	String testCaseId = "myTestCaseId";
-	String testCardId = "myTestCardId";
+	/**
+	 * Test alpha card alpha card descriptor.
+	 */
+	@Test
+	public void testAlphaCardAlphaCardDescriptor() {
+		final String testCaseId = "myTestCaseId";
+		final String testCardId = "myTestCardId";
 
-	AlphaCardDescriptor testDescriptor = new AlphaCardDescriptor();
-	testDescriptor.setAlphaCardIdentifier(new AlphaCardIdentifier(
-		testCaseId, testCardId));
+		final AlphaCardDescriptor testDescriptor = new AlphaCardDescriptor();
+		testDescriptor.setAlphaCardIdentifier(new AlphaCardIdentifier(
+				testCaseId, testCardId));
 
-	AlphaCard testAlphaCard = new AlphaCard(testDescriptor);
+		final AlphaCard testAlphaCard = new AlphaCard(testDescriptor);
 
-	assertTrue(testAlphaCard.getAlphaCardDescriptor()
-		.equals(testDescriptor));
-    }
+		Assert.assertTrue(testAlphaCard.getAlphaCardDescriptor().equals(
+				testDescriptor));
+	}
 
-    @Test(expected = IllegalStateException.class)
-    public void testAlphaCardAlphaCaseException() {
-	AlphaCase testAlphaCase = new AlphaCase();
-	@SuppressWarnings("unused")
-	AlphaCard testAlphaCard = new AlphaCard(testAlphaCase);
-    }
+	/**
+	 * Test alpha card alpha case exception.
+	 */
+	@Test(expected = IllegalStateException.class)
+	public void testAlphaCardAlphaCaseException() {
+		final AlphaCase testAlphaCase = new AlphaCase();
+		@SuppressWarnings("unused")
+		final AlphaCard testAlphaCard = new AlphaCard(testAlphaCase);
+	}
 
-    @Test
-    public void testSetAlphaCardIdentifier() {
-	String testCaseId = "myTestCaseId";
-	String testCardId = "myTestCardId";
+	/**
+	 * Test set alpha card identifier.
+	 */
+	@Test
+	public void testSetAlphaCardIdentifier() {
+		final String testCaseId = "myTestCaseId";
+		final String testCardId = "myTestCardId";
 
-	AlphaCardDescriptor testDescriptor = new AlphaCardDescriptor();
-	AlphaCardIdentifier testAlphaCardIdentifier = new AlphaCardIdentifier(
-		testCaseId, testCardId);
-	testDescriptor.setAlphaCardIdentifier(testAlphaCardIdentifier);
+		final AlphaCardDescriptor testDescriptor = new AlphaCardDescriptor();
+		final AlphaCardIdentifier testAlphaCardIdentifier = new AlphaCardIdentifier(
+				testCaseId, testCardId);
+		testDescriptor.setAlphaCardIdentifier(testAlphaCardIdentifier);
 
-	AlphaCard testAlphaCard = new AlphaCard();
-	testAlphaCard.setAlphaCardIdentifier(testAlphaCardIdentifier);
+		final AlphaCard testAlphaCard = new AlphaCard();
+		testAlphaCard.setAlphaCardIdentifier(testAlphaCardIdentifier);
 
-	assertTrue(testAlphaCard.getAlphaCardIdentifier().equals(
-		testAlphaCardIdentifier));
-    }
+		Assert.assertTrue(testAlphaCard.getAlphaCardIdentifier().equals(
+				testAlphaCardIdentifier));
+	}
 
-    @Test
-    public void testSetAlphaCardDescriptor() {
-	String testCaseId = "myTestCaseId";
-	String testCardId = "myTestCardId";
+	/**
+	 * Test set alpha card descriptor.
+	 */
+	@Test
+	public void testSetAlphaCardDescriptor() {
+		final String testCaseId = "myTestCaseId";
+		final String testCardId = "myTestCardId";
 
-	AlphaCard testAlphaCard = new AlphaCard("myTestCaseId");
+		final AlphaCard testAlphaCard = new AlphaCard("myTestCaseId");
 
-	AlphaCardDescriptor testDescriptor = new AlphaCardDescriptor();
-	AlphaCardIdentifier testAlphaCardIdentifier = new AlphaCardIdentifier(
-		testCaseId, testCardId);
-	testDescriptor.setAlphaCardIdentifier(testAlphaCardIdentifier);
+		final AlphaCardDescriptor testDescriptor = new AlphaCardDescriptor();
+		final AlphaCardIdentifier testAlphaCardIdentifier = new AlphaCardIdentifier(
+				testCaseId, testCardId);
+		testDescriptor.setAlphaCardIdentifier(testAlphaCardIdentifier);
 
-	testAlphaCard.setAlphaCardIdentifier(null);
-	testAlphaCard.setAlphaCardDescriptor(testDescriptor);
+		testAlphaCard.setAlphaCardIdentifier(null);
+		testAlphaCard.setAlphaCardDescriptor(testDescriptor);
 
-	assertTrue(testAlphaCard.getAlphaCardIdentifier().equals(
-		testDescriptor.getAlphaCardIdentifier()));
-    }
+		Assert.assertTrue(testAlphaCard.getAlphaCardIdentifier().equals(
+				testDescriptor.getAlphaCardIdentifier()));
+	}
 
-    @Test
-    public void testSetAlphaCardDescriptorSecondCondition() {
-	String testCaseId = "myTestCaseId";
-	String testCardId = "myTestCardId";
+	/**
+	 * Test set alpha card descriptor second condition.
+	 */
+	@Test
+	public void testSetAlphaCardDescriptorSecondCondition() {
+		final String testCaseId = "myTestCaseId";
+		final String testCardId = "myTestCardId";
 
-	AlphaCard testAlphaCard = new AlphaCard(testCaseId);
+		final AlphaCard testAlphaCard = new AlphaCard(testCaseId);
 
-	AlphaCardDescriptor testDescriptor = new AlphaCardDescriptor();
-	AlphaCardIdentifier testAlphaCardIdentifier = new AlphaCardIdentifier(
-		testCaseId, testCardId);
-	testDescriptor.setAlphaCardIdentifier(testAlphaCardIdentifier);
+		final AlphaCardDescriptor testDescriptor = new AlphaCardDescriptor();
+		final AlphaCardIdentifier testAlphaCardIdentifier = new AlphaCardIdentifier(
+				testCaseId, testCardId);
+		testDescriptor.setAlphaCardIdentifier(testAlphaCardIdentifier);
 
-	testAlphaCard.setAlphaCardIdentifier(null);
-	testAlphaCard.getAlphaCardDescriptor().setAlphaCardIdentifier(null);
-	testAlphaCard.setAlphaCardDescriptor(testDescriptor);
+		testAlphaCard.setAlphaCardIdentifier(null);
+		testAlphaCard.getAlphaCardDescriptor().setAlphaCardIdentifier(null);
+		testAlphaCard.setAlphaCardDescriptor(testDescriptor);
 
-	assertTrue(testAlphaCard.getAlphaCardIdentifier().equals(
-		testDescriptor.getAlphaCardIdentifier()));
+		Assert.assertTrue(testAlphaCard.getAlphaCardIdentifier().equals(
+				testDescriptor.getAlphaCardIdentifier()));
 
-	assertFalse(!testAlphaCard.getAlphaCardIdentifier().equals(
-		testDescriptor.getAlphaCardIdentifier()));
-    }
+		Assert.assertFalse(!testAlphaCard.getAlphaCardIdentifier().equals(
+				testDescriptor.getAlphaCardIdentifier()));
+	}
 
-    @Test
-    public void testEqualsObject() {
-	AlphaCard testAlphaCard = new AlphaCard();
-	assertFalse(testAlphaCard.equals(new AlphaCase()));
-    }
+	/**
+	 * Test equals object.
+	 */
+	@Test
+	public void testEqualsObject() {
+		final AlphaCard testAlphaCard = new AlphaCard();
+		Assert.assertFalse(testAlphaCard.equals(new AlphaCase()));
+	}
 
-    @Test
-    public void testToString() {
-	AlphaCard testAlphaCard = new AlphaCard();
-	testAlphaCard.setAlphaCardDescriptor(new AlphaCardDescriptor());
-	testAlphaCard.setAlphaCardIdentifier(new AlphaCardIdentifier());
-	testAlphaCard.setAlphaCase(new AlphaCase());
-	testAlphaCard.setPayload(new Payload());
+	/**
+	 * Test to string.
+	 */
+	@Test
+	public void testToString() {
+		final AlphaCard testAlphaCard = new AlphaCard();
+		testAlphaCard.setAlphaCardDescriptor(new AlphaCardDescriptor());
+		testAlphaCard.setAlphaCardIdentifier(new AlphaCardIdentifier());
+		testAlphaCard.setAlphaCase(new AlphaCase());
+		testAlphaCard.setPayload(new Payload());
 
-	assertTrue(testAlphaCard.toString().length() > 0);
-    }
+		Assert.assertTrue(testAlphaCard.toString().length() > 0);
+	}
 
-    @Test
-    public void testGetAlphaCase() {
-	AlphaCard testAlphaCard = new AlphaCard();
-	AlphaCase testAlphaCase = new AlphaCase();
+	/**
+	 * Test get alpha case.
+	 */
+	@Test
+	public void testGetAlphaCase() {
+		final AlphaCard testAlphaCard = new AlphaCard();
+		final AlphaCase testAlphaCase = new AlphaCase();
 
-	testAlphaCard.setAlphaCase(testAlphaCase);
+		testAlphaCard.setAlphaCase(testAlphaCase);
 
-	assertTrue(testAlphaCard.getAlphaCase().equals(testAlphaCase));
+		Assert.assertTrue(testAlphaCard.getAlphaCase().equals(testAlphaCase));
 
-	AlphaCard testAlphaCard2 = new AlphaCard();
-	assertFalse(testAlphaCard2.getAlphaCase() != null);
-    }
+		final AlphaCard testAlphaCard2 = new AlphaCard();
+		Assert.assertFalse(testAlphaCard2.getAlphaCase() != null);
+	}
 
-    @Test
-    public void testGetAlphaCardDescriptor() {
-	AlphaCard testAlphaCard = new AlphaCard();
-	AlphaCardDescriptor testAlphaCardDescriptor = new AlphaCardDescriptor();
+	/**
+	 * Test get alpha card descriptor.
+	 */
+	@Test
+	public void testGetAlphaCardDescriptor() {
+		final AlphaCard testAlphaCard = new AlphaCard();
+		final AlphaCardDescriptor testAlphaCardDescriptor = new AlphaCardDescriptor();
 
-	testAlphaCard.setAlphaCardDescriptor(testAlphaCardDescriptor);
+		testAlphaCard.setAlphaCardDescriptor(testAlphaCardDescriptor);
 
-	assertTrue(testAlphaCard.getAlphaCardDescriptor().equals(
-		testAlphaCardDescriptor));
-    }
+		Assert.assertTrue(testAlphaCard.getAlphaCardDescriptor().equals(
+				testAlphaCardDescriptor));
+	}
 
 }

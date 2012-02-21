@@ -1,89 +1,143 @@
+/**************************************************************************
+ * alpha-Portal: A web portal, for managing knowledge-driven 
+ * ad-hoc processes, in form of case files.
+ * ==============================================
+ * Copyright (C) 2011-2012 by 
+ *   - Christoph P. Neumann (http://www.chr15t0ph.de)
+ *   - and the SWAT 2011 team
+ **************************************************************************
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and 
+ * limitations under the License.
+ **************************************************************************
+ * $Id$
+ *************************************************************************/
 package alpha.portal.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import org.apache.commons.lang.ArrayUtils;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * The Class AdornmentTypeTest.
+ */
 public class AdornmentTypeTest {
-    private AdornmentType type;
 
-    private String name;
-    private AdornmentValueType valueType;
-    private AdornmentTypeRange range;
-    private String defaultValue;
+	/** The type. */
+	private AdornmentType type;
 
-    @Before
-    public void setUp() {
-        defaultValue = AdornmentTypeVisibility.PRIVATE.value();
-        valueType = AdornmentValueType.Enum;
-        range = new AdornmentTypeRange(new String[] {
-                AdornmentTypeVisibility.PRIVATE.value(),
-                AdornmentTypeVisibility.PUBLIC.value() });
+	/** The name. */
+	private String name;
 
-        type = AdornmentType.Visibility;
-        type.setValueType(valueType);
-        type.setValueRange(range);
+	/** The value type. */
+	private AdornmentValueType valueType;
 
-        name = type.getName();
-    }
+	/** The range. */
+	private AdornmentTypeRange range;
 
-    @Test
-    public void testFromNameException() {
-        assertNull(AdornmentType.fromName("nosuchvalue_$%&/()"));
-    }
+	/** The default value. */
+	private String defaultValue;
 
-    @Test
-    public void testFromName() {
-        assertTrue(AdornmentType.fromName(AdornmentType.Contributor.getName()) == AdornmentType.Contributor);
-    }
+	/**
+	 * Sets the up.
+	 */
+	@Before
+	public void setUp() {
+		this.defaultValue = AdornmentTypeVisibility.PRIVATE.value();
+		this.valueType = AdornmentValueType.Enum;
+		this.range = new AdornmentTypeRange(new String[] {
+				AdornmentTypeVisibility.PRIVATE.value(),
+				AdornmentTypeVisibility.PUBLIC.value() });
 
-    @Test
-    public void testValueType() {
-        assertTrue(valueType == type.getValueType());
+		this.type = AdornmentType.Visibility;
+		this.type.setValueType(this.valueType);
+		this.type.setValueRange(this.range);
 
-        type.setValueType(AdornmentValueType.String);
-        assertFalse(valueType == type.getValueType());
-    }
+		this.name = this.type.getName();
+	}
 
-    @Test
-    public void testValueRange() {
-        assertTrue(range == type.getValueRange());
+	/**
+	 * Test from name exception.
+	 */
+	@Test
+	public void testFromNameException() {
+		Assert.assertNull(AdornmentType.fromName("nosuchvalue_$%&/()"));
+	}
 
-        type.setValueRange(new AdornmentTypeRange(
-                new String[] { "falsches Array" }));
-        assertFalse(range == type.getValueRange());
-    }
+	/**
+	 * Test from name.
+	 */
+	@Test
+	public void testFromName() {
+		Assert.assertTrue(AdornmentType.fromName(AdornmentType.Contributor
+				.getName()) == AdornmentType.Contributor);
+	}
 
-    @Test
-    public void testValueDefault() {
-        assertTrue(defaultValue == type.getValueDefault());
+	/**
+	 * Test value type.
+	 */
+	@Test
+	public void testValueType() {
+		Assert.assertTrue(this.valueType == this.type.getValueType());
 
-        type.setValueDefault(AdornmentTypeVisibility.PUBLIC.value());
-        assertFalse(defaultValue == type.getValueDefault());
-    }
+		this.type.setValueType(AdornmentValueType.String);
+		Assert.assertFalse(this.valueType == this.type.getValueType());
+	}
 
-    @Test
-    public void testValidate() {
-        assertTrue(AdornmentType.Title.validate("bla"));
-        assertFalse(AdornmentType.Visibility.validate("neeeein"));
-        assertTrue(AdornmentType.Visibility
-                .validate(AdornmentTypeVisibility.PRIVATE.value()));
+	/**
+	 * Test value range.
+	 */
+	@Test
+	public void testValueRange() {
+		Assert.assertTrue(this.range == this.type.getValueRange());
 
-        assertFalse(AdornmentType.PayloadVersionNumber.validate("abc"));
-    }
+		this.type.setValueRange(new AdornmentTypeRange(
+				new String[] { "falsches Array" }));
+		Assert.assertFalse(this.range == this.type.getValueRange());
+	}
 
-    @Test
-    public void testValidStrings() {
-        String[] t = AdornmentType.Visibility.getValueRange().getValidStrings();
-        assertEquals(2, t.length);
-        assertTrue(ArrayUtils.contains(t, AdornmentTypeVisibility.PRIVATE
-                .value()));
-        assertTrue(ArrayUtils.contains(t, AdornmentTypeVisibility.PUBLIC
-                .value()));
-    }
+	/**
+	 * Test value default.
+	 */
+	@Test
+	public void testValueDefault() {
+		Assert.assertTrue(this.defaultValue == this.type.getValueDefault());
+
+		this.type.setValueDefault(AdornmentTypeVisibility.PUBLIC.value());
+		Assert.assertFalse(this.defaultValue == this.type.getValueDefault());
+	}
+
+	/**
+	 * Test validate.
+	 */
+	@Test
+	public void testValidate() {
+		Assert.assertTrue(AdornmentType.Title.validate("bla"));
+		Assert.assertFalse(AdornmentType.Visibility.validate("neeeein"));
+		Assert.assertTrue(AdornmentType.Visibility
+				.validate(AdornmentTypeVisibility.PRIVATE.value()));
+
+		Assert.assertFalse(AdornmentType.PayloadVersionNumber.validate("abc"));
+	}
+
+	/**
+	 * Test valid strings.
+	 */
+	@Test
+	public void testValidStrings() {
+		final String[] t = AdornmentType.Visibility.getValueRange()
+				.getValidStrings();
+		Assert.assertEquals(2, t.length);
+		Assert.assertTrue(ArrayUtils.contains(t,
+				AdornmentTypeVisibility.PRIVATE.value()));
+		Assert.assertTrue(ArrayUtils.contains(t,
+				AdornmentTypeVisibility.PUBLIC.value()));
+	}
 }

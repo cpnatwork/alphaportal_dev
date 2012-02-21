@@ -1,12 +1,29 @@
+/**************************************************************************
+ * alpha-Portal: A web portal, for managing knowledge-driven 
+ * ad-hoc processes, in form of case files.
+ * ==============================================
+ * Copyright (C) 2011-2012 by 
+ *   - Christoph P. Neumann (http://www.chr15t0ph.de)
+ *   - and the SWAT 2011 team
+ **************************************************************************
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and 
+ * limitations under the License.
+ **************************************************************************
+ * $Id$
+ *************************************************************************/
 package alpha.portal.dao;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
 import org.appfuse.dao.BaseDaoTestCase;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,146 +34,165 @@ import alpha.portal.model.PayloadIdentifier;
 import alpha.portal.service.AlphaCardManager;
 import alpha.portal.service.impl.CaseManagerImpl;
 
+/**
+ * The Class PayloadDaoTest.
+ */
 public class PayloadDaoTest extends BaseDaoTestCase {
 
-    /** The payload dao. */
-    @Autowired
-    private PayloadDao payloadDao;
+	/** The payload dao. */
+	@Autowired
+	private PayloadDao payloadDao;
 
-    @Autowired
-    private AlphaCardManager alphaCardManager;
+	/** The alpha card manager. */
+	@Autowired
+	private AlphaCardManager alphaCardManager;
 
-    @Autowired
-    private CaseManagerImpl caseManager;
+	/** The case manager. */
+	@Autowired
+	private CaseManagerImpl caseManager;
 
-    @Test
-    public void testGetAllVersions() {
-        AlphaCase aCase = new AlphaCase();
-        aCase = caseManager.save(aCase);
+	/**
+	 * Test get all versions.
+	 */
+	@Test
+	public void testGetAllVersions() {
+		AlphaCase aCase = new AlphaCase();
+		aCase = this.caseManager.save(aCase);
 
-        // AlphaCard aCard = alphaCardManager.createAlphaCard(aCase.getCaseId());
-        AlphaCard aCard = new AlphaCard(aCase);
+		// AlphaCard aCard =
+		// alphaCardManager.createAlphaCard(aCase.getCaseId());
+		AlphaCard aCard = new AlphaCard(aCase);
 
-        byte[] content = "payload data1".getBytes();
-        Payload payload = new Payload();
-        payload.setFilename("filename");
-        payload.setMimeType("text/plain");
-        payload.setContent(content);
-        payload = payloadDao.save(payload); // first payload version
-        flush();
+		byte[] content = "payload data1".getBytes();
+		Payload payload = new Payload();
+		payload.setFilename("filename");
+		payload.setMimeType("text/plain");
+		payload.setContent(content);
+		payload = this.payloadDao.save(payload); // first payload version
+		this.flush();
 
-        List<Payload> payloads = payloadDao.getAllVersions(payload);
-        assertEquals(1, payloads.size());
+		List<Payload> payloads = this.payloadDao.getAllVersions(payload);
+		Assert.assertEquals(1, payloads.size());
 
-        aCard.setPayload(payload);
-        aCard = alphaCardManager.save(aCard);
-        flush();
+		aCard.setPayload(payload);
+		aCard = this.alphaCardManager.save(aCard);
+		this.flush();
 
-        aCard.setPayload(null);
-        aCard = alphaCardManager.save(aCard);
+		aCard.setPayload(null);
+		aCard = this.alphaCardManager.save(aCard);
 
-        payloads = payloadDao.getAllVersions(payload);
-        assertEquals(1, payloads.size());
+		payloads = this.payloadDao.getAllVersions(payload);
+		Assert.assertEquals(1, payloads.size());
 
-        content = "payload data2".getBytes();
-        Payload payload2 = new Payload();
-        payload2.setPayloadIdentifier(new PayloadIdentifier(payload
-                .getPayloadIdentifier().getPayloadId(), 0));
-        payload2.setFilename("filename");
-        payload2.setMimeType("text/plain");
-        payload2.setContent(content);
-        payload2 = payloadDao.save(payload2); // second payload version
-        flush();
+		content = "payload data2".getBytes();
+		Payload payload2 = new Payload();
+		payload2.setPayloadIdentifier(new PayloadIdentifier(payload
+				.getPayloadIdentifier().getPayloadId(), 0));
+		payload2.setFilename("filename");
+		payload2.setMimeType("text/plain");
+		payload2.setContent(content);
+		payload2 = this.payloadDao.save(payload2); // second payload version
+		this.flush();
 
-        aCard.setPayload(payload2);
-        aCard = alphaCardManager.save(aCard);
+		aCard.setPayload(payload2);
+		aCard = this.alphaCardManager.save(aCard);
 
-        payloads = payloadDao.getAllVersions(payload2);
-        assertEquals(2, payloads.size());
+		payloads = this.payloadDao.getAllVersions(payload2);
+		Assert.assertEquals(2, payloads.size());
 
-    }
+	}
 
-    @Test
-    public void testGetVersion() {
+	/**
+	 * Test get version.
+	 */
+	@Test
+	public void testGetVersion() {
 
-        AlphaCase aCase = new AlphaCase();
+		AlphaCase aCase = new AlphaCase();
 
-        aCase = caseManager.save(aCase);
+		aCase = this.caseManager.save(aCase);
 
-        //AlphaCard aCard = alphaCardManager.createAlphaCard(aCase.getCaseId());
-        AlphaCard aCard = new AlphaCard(aCase);
+		// AlphaCard aCard =
+		// alphaCardManager.createAlphaCard(aCase.getCaseId());
+		AlphaCard aCard = new AlphaCard(aCase);
 
-        byte[] content = "payload data1".getBytes();
-        Payload payload = new Payload();
-        payload.setFilename("filename");
-        payload.setMimeType("text/plain");
-        payload.setContent(content);
-        payload = payloadDao.save(payload);
-        flush();
+		byte[] content = "payload data1".getBytes();
+		Payload payload = new Payload();
+		payload.setFilename("filename");
+		payload.setMimeType("text/plain");
+		payload.setContent(content);
+		payload = this.payloadDao.save(payload);
+		this.flush();
 
-        aCard.setPayload(payload);
+		aCard.setPayload(payload);
 
-        aCard = alphaCardManager.save(aCard);
-        flush();
-        aCard.setPayload(null);
-        aCard = alphaCardManager.save(aCard);
+		aCard = this.alphaCardManager.save(aCard);
+		this.flush();
+		aCard.setPayload(null);
+		aCard = this.alphaCardManager.save(aCard);
 
-        content = "payload data2".getBytes();
-        Payload payload2 = new Payload();
-        payload2.setFilename("filename");
-        payload2.setMimeType("text/plain");
-        payload2.setContent(content);
-        payload2 = payloadDao.save(payload2);
-        flush();
+		content = "payload data2".getBytes();
+		Payload payload2 = new Payload();
+		payload2.setFilename("filename");
+		payload2.setMimeType("text/plain");
+		payload2.setContent(content);
+		payload2 = this.payloadDao.save(payload2);
+		this.flush();
 
-        aCard.setPayload(payload2);
+		aCard.setPayload(payload2);
 
-        aCard = alphaCardManager.save(aCard);
+		aCard = this.alphaCardManager.save(aCard);
 
-        Payload backPayload = payloadDao.getVersion(payload2
-                .getPayloadIdentifier());
+		final Payload backPayload = this.payloadDao.getVersion(payload2
+				.getPayloadIdentifier());
 
-        assertTrue(backPayload.getPayloadIdentifier().getSequenceNumber() == payload2
-                .getPayloadIdentifier().getSequenceNumber());
+		Assert.assertTrue(backPayload.getPayloadIdentifier()
+				.getSequenceNumber() == payload2.getPayloadIdentifier()
+				.getSequenceNumber());
 
-    }
+	}
 
-    @Test
-    public void testSave() {
+	/**
+	 * Test save.
+	 */
+	@Test
+	public void testSave() {
 
-        AlphaCase aCase = new AlphaCase();
+		AlphaCase aCase = new AlphaCase();
 
-        aCase = caseManager.save(aCase);
+		aCase = this.caseManager.save(aCase);
 
-        //AlphaCard aCard = alphaCardManager.createAlphaCard(aCase.getCaseId());
-        AlphaCard aCard = new AlphaCard(aCase);
+		// AlphaCard aCard =
+		// alphaCardManager.createAlphaCard(aCase.getCaseId());
+		AlphaCard aCard = new AlphaCard(aCase);
 
-        byte[] content = "payload data1".getBytes();
-        Payload payload = new Payload();
-        payload.setFilename("filename");
-        payload.setMimeType("text/plain");
-        payload.setContent(content);
-        payload = payloadDao.save(payload);
-        flush();
+		final byte[] content = "payload data1".getBytes();
+		Payload payload = new Payload();
+		payload.setFilename("filename");
+		payload.setMimeType("text/plain");
+		payload.setContent(content);
+		payload = this.payloadDao.save(payload);
+		this.flush();
 
-        Long payloadId = payload.getPayloadIdentifier().getPayloadId();
+		final Long payloadId = payload.getPayloadIdentifier().getPayloadId();
 
-        aCard.setPayload(payload);
+		aCard.setPayload(payload);
 
-        aCard = alphaCardManager.save(aCard);
-        flush();
+		aCard = this.alphaCardManager.save(aCard);
+		this.flush();
 
-        assertTrue(payloadId == payloadDao.getVersion(
-                payload.getPayloadIdentifier()).getPayloadIdentifier()
-                .getPayloadId());
+		Assert.assertTrue(payloadId == this.payloadDao
+				.getVersion(payload.getPayloadIdentifier())
+				.getPayloadIdentifier().getPayloadId());
 
-        int oldVersionCount = payloadDao.getAllVersions(payload).size();
-        byte[] content2 = "payload data2".getBytes();
-        payload.setContent(content2);
-        payload = payloadDao.save(payload);
-        flush();
+		final int oldVersionCount = this.payloadDao.getAllVersions(payload)
+				.size();
+		final byte[] content2 = "payload data2".getBytes();
+		payload.setContent(content2);
+		payload = this.payloadDao.save(payload);
+		this.flush();
 
-        assertFalse(oldVersionCount == payloadDao.getAllVersions(payload)
-                .size());
-    }
+		Assert.assertFalse(oldVersionCount == this.payloadDao.getAllVersions(
+				payload).size());
+	}
 }

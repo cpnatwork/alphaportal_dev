@@ -1,3 +1,23 @@
+/**************************************************************************
+ * alpha-Portal: A web portal, for managing knowledge-driven 
+ * ad-hoc processes, in form of case files.
+ * ==============================================
+ * Copyright (C) 2011-2012 by 
+ *   - Christoph P. Neumann (http://www.chr15t0ph.de)
+ *   - and the SWAT 2011 team
+ **************************************************************************
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and 
+ * limitations under the License.
+ **************************************************************************
+ * $Id$
+ *************************************************************************/
 package alpha.portal.webapp.controller;
 
 import java.util.List;
@@ -21,58 +41,42 @@ import alpha.portal.service.ContributorRoleManager;
 import alpha.portal.service.UserExtensionManager;
 
 /**
- * Test for ContributorRoleController
+ * Test for ContributorRoleController.
  * 
  * @see ContributorRoleController ContributorRoleController
  */
 public class ContributorRoleControllerTest extends BaseControllerTestCase {
 
-	/**
-	 * User name of test user
-	 */
+	/** User name of test user. */
 	private final String testUserName = "ichbineintollertesterdenesnochnichtgibt";
 
-	/**
-	 * Name of test contributor role
-	 */
+	/** Name of test contributor role. */
 	private final String testcontribRoleName = "Test Contributor Role";
 
-	/**
-	 * Test user object
-	 */
+	/** Test user object. */
 	private User u;
 
-	/**
-	 * Test contributor role
-	 */
+	/** Test contributor role. */
 	private ContributorRole contribRole;
 
-	/**
-	 * The controller
-	 */
+	/** The controller. */
 	@Autowired
 	private ContributorRoleController ctrl;
 
-	/**
-	 * The ContributorRoleManager
-	 */
+	/** The ContributorRoleManager. */
 	@Autowired
 	private ContributorRoleManager contributorRoleManager;
 
-	/**
-	 * The user manager
-	 */
+	/** The user manager. */
 	@Autowired
 	private UserManager userManager;
 
-	/**
-	 * The UserExtensionManager
-	 */
+	/** The UserExtensionManager. */
 	@Autowired
 	private UserExtensionManager UserExtensionManager;
 
 	/**
-	 * - Prepare and save test user - Create test contributorRole
+	 * - Prepare and save test user - Create test contributorRole.
 	 */
 	@Before
 	public void beforePrepare() {
@@ -88,9 +92,10 @@ public class ContributorRoleControllerTest extends BaseControllerTestCase {
 	}
 
 	/**
-	 * Test basic page call
+	 * Test basic page call.
 	 * 
 	 * @throws Exception
+	 *             the exception
 	 */
 	@SuppressWarnings("unchecked")
 	@Test
@@ -114,9 +119,10 @@ public class ContributorRoleControllerTest extends BaseControllerTestCase {
 	}
 
 	/**
-	 * V-Test (save, show, edit, delete)
+	 * V-Test (save, show, edit, delete).
 	 * 
 	 * @throws Exception
+	 *             the exception
 	 */
 	@SuppressWarnings("unchecked")
 	@Test
@@ -222,9 +228,10 @@ public class ContributorRoleControllerTest extends BaseControllerTestCase {
 	}
 
 	/**
-	 * "Umlaut"-Test
+	 * "Umlaut"-Test.
 	 * 
 	 * @throws Exception
+	 *             the exception
 	 */
 	@SuppressWarnings("unchecked")
 	@Test
@@ -255,7 +262,10 @@ public class ContributorRoleControllerTest extends BaseControllerTestCase {
 	}
 
 	/**
-	 * Test for get error redirects
+	 * Test for get error redirects.
+	 * 
+	 * @throws Exception
+	 *             the exception
 	 */
 	@Test
 	public void testGetErrors() throws Exception {
@@ -292,7 +302,10 @@ public class ContributorRoleControllerTest extends BaseControllerTestCase {
 	}
 
 	/**
-	 * Test for post error redirects
+	 * Test for post error redirects.
+	 * 
+	 * @throws Exception
+	 *             the exception
 	 */
 	@Test
 	public void testPostErrors() throws Exception {
@@ -388,7 +401,7 @@ public class ContributorRoleControllerTest extends BaseControllerTestCase {
 	}
 
 	/**
-	 * - delete test user - delete test contributor role
+	 * - delete test user - delete test contributor role.
 	 */
 	@After
 	public void afterCleanup() {

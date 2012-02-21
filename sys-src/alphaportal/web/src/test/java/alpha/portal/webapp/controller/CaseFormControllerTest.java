@@ -1,9 +1,24 @@
+/**************************************************************************
+ * alpha-Portal: A web portal, for managing knowledge-driven 
+ * ad-hoc processes, in form of case files.
+ * ==============================================
+ * Copyright (C) 2011-2012 by 
+ *   - Christoph P. Neumann (http://www.chr15t0ph.de)
+ *   - and the SWAT 2011 team
+ **************************************************************************
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and 
+ * limitations under the License.
+ **************************************************************************
+ * $Id$
+ *************************************************************************/
 package alpha.portal.webapp.controller;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.appfuse.model.User;
 import org.appfuse.service.UserManager;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -26,146 +42,207 @@ import alpha.portal.model.AlphaCase;
 import alpha.portal.service.CaseManager;
 import alpha.portal.webapp.util.CardFilterHolder;
 
+/**
+ * The Class CaseFormControllerTest.
+ */
 public class CaseFormControllerTest extends BaseControllerTestCase {
-    private static final String caseId = "550e4713-e22b-11d4-a716-446655440000";
 
-    @Autowired
-    private CaseFormController form;
+	/** The Constant caseId. */
+	private static final String caseId = "550e4713-e22b-11d4-a716-446655440000";
 
-    @Autowired
-    private UserManager userManager;
+	/** The form. */
+	@Autowired
+	private CaseFormController form;
 
-    @Autowired
-    private CaseManager caseManager;
+	/** The user manager. */
+	@Autowired
+	private UserManager userManager;
 
-    private CardFilterHolder filters = new CardFilterHolder();
+	/** The case manager. */
+	@Autowired
+	private CaseManager caseManager;
 
-    /**
-     * This test is run here since we don't have a userManager available in the core module and participants are
-     * connected with a case
-     */
-    @Test
-    public void testCaseCRA() {
-        User u = userManager.get(-2L);
-        AlphaCase aCase = caseManager.get(caseId);
-        assertNotNull(aCase);
-        assertNotNull(aCase.getListOfParticipants());
-        aCase.addParticipant(u);
-        aCase = caseManager.save(aCase);
+	/** The filters. */
+	private final CardFilterHolder filters = new CardFilterHolder();
 
-        Set<User> participants = aCase.getListOfParticipants();
-        // this must be true from sample data
-        aCase = caseManager.get(caseId);
-        assertTrue(participants.contains(u));
-    }
+	/**
+	 * This test is run here since we don't have a userManager available in the
+	 * core module and participants are connected with a case.
+	 */
+	@Test
+	public void testCaseCRA() {
+		final User u = this.userManager.get(-2L);
+		AlphaCase aCase = this.caseManager.get(CaseFormControllerTest.caseId);
+		Assert.assertNotNull(aCase);
+		Assert.assertNotNull(aCase.getListOfParticipants());
+		aCase.addParticipant(u);
+		aCase = this.caseManager.save(aCase);
 
-    @Test
-    public void testNew() throws Exception {
-        MockHttpServletRequest request = newGet("/caseform");
-        request.setRemoteUser("admin");
+		final Set<User> participants = aCase.getListOfParticipants();
+		// this must be true from sample data
+		aCase = this.caseManager.get(CaseFormControllerTest.caseId);
+		Assert.assertTrue(participants.contains(u));
+	}
 
-        HttpServletResponse response = new MockHttpServletResponse();
-        ModelAndView mv = form.showForm(filters, request, response);
-        assertNotNull(mv);
-        assertEquals("caseform", mv.getViewName());
-        assertEquals(new AlphaCase(), mv.getModel().get("case"));
-    }
+	/**
+	 * Test new.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Test
+	public void testNew() throws Exception {
+		final MockHttpServletRequest request = this.newGet("/caseform");
+		request.setRemoteUser("admin");
 
-    @Test
-    public void testLast() throws Exception {
-        MockHttpServletRequest request = newGet("/caseform");
-        request.setParameter("caseId", "550e4713-e22b-11d4-a716-446655440002");
-        request.setRemoteUser("admin");
-        ModelAndView mv = form.showForm(filters, request, new MockHttpServletResponse());
+		final HttpServletResponse response = new MockHttpServletResponse();
+		final ModelAndView mv = this.form.showForm(this.filters, request,
+				response);
+		Assert.assertNotNull(mv);
+		Assert.assertEquals("caseform", mv.getViewName());
+		Assert.assertEquals(new AlphaCase(), mv.getModel().get("case"));
+	}
 
-        request = newGet("/caseform");
-        request.setParameter("caseId", "last");
-        request.setRemoteUser("admin");
+	/**
+	 * Test last.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Test
+	public void testLast() throws Exception {
+		MockHttpServletRequest request = this.newGet("/caseform");
+		request.setParameter("caseId", "550e4713-e22b-11d4-a716-446655440002");
+		request.setRemoteUser("admin");
+		ModelAndView mv = this.form.showForm(this.filters, request,
+				new MockHttpServletResponse());
 
-        AlphaCase aCase = caseManager.get("550e4713-e22b-11d4-a716-446655440002");
-        mv = form.showForm(filters, request, new MockHttpServletResponse());
-        assertEquals("caseform", mv.getViewName());
-        assertEquals(aCase, mv.getModel().get("case"));
-    }
+		request = this.newGet("/caseform");
+		request.setParameter("caseId", "last");
+		request.setRemoteUser("admin");
 
-    @Test
-    public void testAdd() throws Exception {
-        MockHttpServletRequest request = newGet("/caseform");
-        request.setRemoteUser("admin");
-        ModelAndView mv = form.showForm(filters, request, new MockHttpServletResponse());
+		final AlphaCase aCase = this.caseManager
+				.get("550e4713-e22b-11d4-a716-446655440002");
+		mv = this.form.showForm(this.filters, request,
+				new MockHttpServletResponse());
+		Assert.assertEquals("caseform", mv.getViewName());
+		Assert.assertEquals(aCase, mv.getModel().get("case"));
+	}
 
-        request = newPost("/caseform");
-        request.setRemoteUser("admin");
-        AlphaCase aCase = (AlphaCase) mv.getModel().get("case");
-        aCase.setName("test case which does not exist yet");
-        BindingResult errors = new DataBinder(aCase).getBindingResult();
-        String view = form.addCase(aCase, errors, request, new MockHttpServletResponse());
+	/**
+	 * Test add.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Test
+	public void testAdd() throws Exception {
+		MockHttpServletRequest request = this.newGet("/caseform");
+		request.setRemoteUser("admin");
+		final ModelAndView mv = this.form.showForm(this.filters, request,
+				new MockHttpServletResponse());
 
-        List<AlphaCase> dbCases = caseManager.findByName(aCase.getName());
-        assertNotNull(dbCases);
-        assertTrue(dbCases.size() >= 1);
-        AlphaCase dbCase = dbCases.get(0);
-        assertNotNull(dbCase);
-        assertEquals("redirect:/caseform?caseId=" + dbCase.getCaseId(), view);
-        assertFalse(errors.hasErrors());
-        assertNotNull(request.getSession().getAttribute("successMessages"));
+		request = this.newPost("/caseform");
+		request.setRemoteUser("admin");
+		final AlphaCase aCase = (AlphaCase) mv.getModel().get("case");
+		aCase.setName("test case which does not exist yet");
+		final BindingResult errors = new DataBinder(aCase).getBindingResult();
+		final String view = this.form.addCase(aCase, errors, request,
+				new MockHttpServletResponse());
 
-        Locale locale = request.getLocale();
-        ArrayList<Object> msgs = (ArrayList<Object>) request.getSession().getAttribute("successMessages");
-        assertTrue(msgs.contains(form.getText("case.added", locale)));
-    }
+		final List<AlphaCase> dbCases = this.caseManager.findByName(aCase
+				.getName());
+		Assert.assertNotNull(dbCases);
+		Assert.assertTrue(dbCases.size() >= 1);
+		final AlphaCase dbCase = dbCases.get(0);
+		Assert.assertNotNull(dbCase);
+		Assert.assertEquals("redirect:/caseform?caseId=" + dbCase.getCaseId(),
+				view);
+		Assert.assertFalse(errors.hasErrors());
+		Assert.assertNotNull(request.getSession().getAttribute(
+				"successMessages"));
 
-    @Test
-    public void testEdit() throws Exception {
-        MockHttpServletRequest request = newGet("/caseform");
-        request.setParameter("caseId", caseId);
-        request.setRemoteUser("admin");
-        ModelAndView mv = form.showForm(filters, request, new MockHttpServletResponse());
-        assertEquals("caseform", mv.getViewName());
-        AlphaCase aCase = (AlphaCase) mv.getModel().get("case");
-        AlphaCase dbCase = caseManager.get(caseId);
-        assertEquals(dbCase, aCase);
-        assertEquals(dbCase.getAlphaCards(), mv.getModel().get("cards"));
-        assertEquals(dbCase.getListOfParticipants(), mv.getModel().get("participants"));
+		final Locale locale = request.getLocale();
+		final ArrayList<Object> msgs = (ArrayList<Object>) request.getSession()
+				.getAttribute("successMessages");
+		Assert.assertTrue(msgs.contains(this.form.getText("case.added", locale)));
+	}
 
-        request = newPost("/caseform");
-        request.setRemoteUser("admin");
-        aCase.setName("test case with a new name");
-        BindingResult errors = new DataBinder(aCase).getBindingResult();
-        String view = form.saveCase(aCase, errors, request, new MockHttpServletResponse());
-        assertEquals("redirect:/caseform?caseId=" + aCase.getCaseId(), view);
-        assertFalse(errors.hasErrors());
-        assertNotNull(request.getSession().getAttribute("successMessages"));
+	/**
+	 * Test edit.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Test
+	public void testEdit() throws Exception {
+		MockHttpServletRequest request = this.newGet("/caseform");
+		request.setParameter("caseId", CaseFormControllerTest.caseId);
+		request.setRemoteUser("admin");
+		final ModelAndView mv = this.form.showForm(this.filters, request,
+				new MockHttpServletResponse());
+		Assert.assertEquals("caseform", mv.getViewName());
+		final AlphaCase aCase = (AlphaCase) mv.getModel().get("case");
+		AlphaCase dbCase = this.caseManager.get(CaseFormControllerTest.caseId);
+		Assert.assertEquals(dbCase, aCase);
+		Assert.assertEquals(dbCase.getAlphaCards(), mv.getModel().get("cards"));
+		Assert.assertEquals(dbCase.getListOfParticipants(),
+				mv.getModel().get("participants"));
 
-        Locale locale = request.getLocale();
-        ArrayList<Object> msgs = (ArrayList<Object>) request.getSession().getAttribute("successMessages");
-        assertTrue(msgs.contains(form.getText("case.updated", locale)));
+		request = this.newPost("/caseform");
+		request.setRemoteUser("admin");
+		aCase.setName("test case with a new name");
+		final BindingResult errors = new DataBinder(aCase).getBindingResult();
+		final String view = this.form.saveCase(aCase, errors, request,
+				new MockHttpServletResponse());
+		Assert.assertEquals("redirect:/caseform?caseId=" + aCase.getCaseId(),
+				view);
+		Assert.assertFalse(errors.hasErrors());
+		Assert.assertNotNull(request.getSession().getAttribute(
+				"successMessages"));
 
-        dbCase = caseManager.get(caseId);
-        assertEquals(dbCase, aCase);
-    }
+		final Locale locale = request.getLocale();
+		final ArrayList<Object> msgs = (ArrayList<Object>) request.getSession()
+				.getAttribute("successMessages");
+		Assert.assertTrue(msgs.contains(this.form.getText("case.updated",
+				locale)));
 
-    @Test
-    public void testDelete() throws Exception {
-        MockHttpServletRequest request = newGet("/caseform");
-        request.setParameter("caseId", caseId);
-        request.setRemoteUser("admin");
-        ModelAndView mv = form.showForm(filters, request, new MockHttpServletResponse());
-        AlphaCase myCase = (AlphaCase) mv.getModel().get("case");
+		dbCase = this.caseManager.get(CaseFormControllerTest.caseId);
+		Assert.assertEquals(dbCase, aCase);
+	}
 
-        request = newPost("/caseform");
-        request.setRemoteUser("admin");
-        request.addParameter("delete", "");
+	/**
+	 * Test delete.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Test
+	public void testDelete() throws Exception {
+		MockHttpServletRequest request = this.newGet("/caseform");
+		request.setParameter("caseId", CaseFormControllerTest.caseId);
+		request.setRemoteUser("admin");
+		final ModelAndView mv = this.form.showForm(this.filters, request,
+				new MockHttpServletResponse());
+		final AlphaCase myCase = (AlphaCase) mv.getModel().get("case");
 
-        BindingResult errors = new DataBinder(myCase).getBindingResult();
-        String view = form.deleteCase(myCase, errors, request);
-        assertEquals(form.getCancelView(), view);
-        assertNotNull(request.getSession().getAttribute("successMessages"));
+		request = this.newPost("/caseform");
+		request.setRemoteUser("admin");
+		request.addParameter("delete", "");
 
-        Locale locale = request.getLocale();
-        ArrayList<Object> msgs = (ArrayList<Object>) request.getSession().getAttribute("successMessages");
-        assertTrue(msgs.contains(form.getText("case.deleted", locale)));
+		final BindingResult errors = new DataBinder(myCase).getBindingResult();
+		final String view = this.form.deleteCase(myCase, errors, request);
+		Assert.assertEquals(this.form.getCancelView(), view);
+		Assert.assertNotNull(request.getSession().getAttribute(
+				"successMessages"));
 
-        assertFalse(caseManager.exists(caseId));
-    }
+		final Locale locale = request.getLocale();
+		final ArrayList<Object> msgs = (ArrayList<Object>) request.getSession()
+				.getAttribute("successMessages");
+		Assert.assertTrue(msgs.contains(this.form.getText("case.deleted",
+				locale)));
+
+		Assert.assertFalse(this.caseManager
+				.exists(CaseFormControllerTest.caseId));
+	}
 }

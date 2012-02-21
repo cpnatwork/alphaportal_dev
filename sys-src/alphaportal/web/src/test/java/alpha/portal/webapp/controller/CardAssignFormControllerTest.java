@@ -1,3 +1,23 @@
+/**************************************************************************
+ * alpha-Portal: A web portal, for managing knowledge-driven 
+ * ad-hoc processes, in form of case files.
+ * ==============================================
+ * Copyright (C) 2011-2012 by 
+ *   - Christoph P. Neumann (http://www.chr15t0ph.de)
+ *   - and the SWAT 2011 team
+ **************************************************************************
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and 
+ * limitations under the License.
+ **************************************************************************
+ * $Id$
+ *************************************************************************/
 package alpha.portal.webapp.controller;
 
 import java.util.LinkedList;
@@ -16,16 +36,26 @@ import alpha.portal.model.ContributorRequest;
 import alpha.portal.model.UserExtension;
 import alpha.portal.service.UserExtensionManager;
 
+/**
+ * The Class CardAssignFormControllerTest.
+ */
 public class CardAssignFormControllerTest extends BaseControllerTestCase {
+
+	/** The form. */
 	@Autowired
 	private CardAssignFormController form;
 
+	/** The contr req manager. */
 	@Autowired
 	private GenericManager<ContributorRequest, Long> contrReqManager;
 
+	/** The user extension manager. */
 	@Autowired
 	private UserExtensionManager userExtensionManager;
 
+	/**
+	 * Test show form.
+	 */
 	@Test
 	public void testShowForm() {
 		final MockHttpServletRequest request = this.newGet("/cardassignform");
@@ -62,6 +92,12 @@ public class CardAssignFormControllerTest extends BaseControllerTestCase {
 		// m.asMap()), "users", l);
 	}
 
+	/**
+	 * Test on submit.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void testOnSubmit() throws Exception {
 		final String cardId = "440e4816-e01b-74d4-a716-449955440092";

@@ -1,147 +1,228 @@
+/**************************************************************************
+ * alpha-Portal: A web portal, for managing knowledge-driven 
+ * ad-hoc processes, in form of case files.
+ * ==============================================
+ * Copyright (C) 2011-2012 by 
+ *   - Christoph P. Neumann (http://www.chr15t0ph.de)
+ *   - and the SWAT 2011 team
+ **************************************************************************
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and 
+ * limitations under the License.
+ **************************************************************************
+ * $Id$
+ *************************************************************************/
 package alpha.portal.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.appfuse.model.User;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * The Class AlphaCaseTest.
+ */
 public class AlphaCaseTest {
 
-    AlphaCase alphaCase = new AlphaCase();
+	/** The alpha case. */
+	AlphaCase alphaCase = new AlphaCase();
 
-    private String testId = "4711";
-    private String name = "testCase";
+	/** The test id. */
+	private final String testId = "4711";
 
-    AlphaCard alphaCard1 = new AlphaCard();
-    AlphaCard alphaCard2 = new AlphaCard();
-    AlphaCard alphaCard3 = new AlphaCard();
+	/** The name. */
+	private final String name = "testCase";
 
-    private AlphaCardIdentifier testidentifier1 = new AlphaCardIdentifier(testId, "4811");
-    private AlphaCardIdentifier testidentifier2 = new AlphaCardIdentifier(testId, "4812");
-    private AlphaCardIdentifier testidentifier3 = new AlphaCardIdentifier(testId, "4813");
+	/** The alpha card1. */
+	AlphaCard alphaCard1 = new AlphaCard();
 
-    User participant = new User();
+	/** The alpha card2. */
+	AlphaCard alphaCard2 = new AlphaCard();
 
-    @Before
-    public void setUp() {
-        alphaCase.setCaseId(testId);
-        alphaCase.setName(name);
-        alphaCard1.setAlphaCardIdentifier(testidentifier1);
-        alphaCard2.setAlphaCardIdentifier(testidentifier2);
-        alphaCard3.setAlphaCardIdentifier(testidentifier3);
-        participant.setId(5L);
-    }
+	/** The alpha card3. */
+	AlphaCard alphaCard3 = new AlphaCard();
 
-    @Test
-    public void testGetCaseId() {
-        assertTrue(alphaCase.getCaseId().equals(testId));
-    }
+	/** The testidentifier1. */
+	private final AlphaCardIdentifier testidentifier1 = new AlphaCardIdentifier(
+			this.testId, "4811");
 
-    @Test
-    public void testSetCaseId() {
-        alphaCase.setCaseId("4911");
-        assertTrue(alphaCase.getCaseId() == "4911");
-    }
+	/** The testidentifier2. */
+	private final AlphaCardIdentifier testidentifier2 = new AlphaCardIdentifier(
+			this.testId, "4812");
 
-    @Test
-    public void testGetName() {
-        assertTrue(alphaCase.getName().equals(name));
-    }
+	/** The testidentifier3. */
+	private final AlphaCardIdentifier testidentifier3 = new AlphaCardIdentifier(
+			this.testId, "4813");
 
-    @Test
-    public void testSetName() {
-        alphaCase.setName("Hugo");
-        assertTrue(alphaCase.getName() == "Hugo");
-    }
+	/** The participant. */
+	User participant = new User();
 
-    @Test
-    public void testParticipants() {
-        assertEquals(0, alphaCase.getListOfParticipants().size());
+	/**
+	 * Sets the up.
+	 */
+	@Before
+	public void setUp() {
+		this.alphaCase.setCaseId(this.testId);
+		this.alphaCase.setName(this.name);
+		this.alphaCard1.setAlphaCardIdentifier(this.testidentifier1);
+		this.alphaCard2.setAlphaCardIdentifier(this.testidentifier2);
+		this.alphaCard3.setAlphaCardIdentifier(this.testidentifier3);
+		this.participant.setId(5L);
+	}
 
-        alphaCase.addParticipant(participant);
-        assertEquals(1, alphaCase.getListOfParticipants().size());
+	/**
+	 * Test get case id.
+	 */
+	@Test
+	public void testGetCaseId() {
+		Assert.assertTrue(this.alphaCase.getCaseId().equals(this.testId));
+	}
 
-        alphaCase.getListOfParticipants().contains(participant);
+	/**
+	 * Test set case id.
+	 */
+	@Test
+	public void testSetCaseId() {
+		this.alphaCase.setCaseId("4911");
+		Assert.assertTrue(this.alphaCase.getCaseId() == "4911");
+	}
 
-        alphaCase.removeParticipant(participant);
-        assertEquals(0, alphaCase.getListOfParticipants().size());
+	/**
+	 * Test get name.
+	 */
+	@Test
+	public void testGetName() {
+		Assert.assertTrue(this.alphaCase.getName().equals(this.name));
+	}
 
-        assertTrue(alphaCase.getParticipantsCRA() != null);
-    }
+	/**
+	 * Test set name.
+	 */
+	@Test
+	public void testSetName() {
+		this.alphaCase.setName("Hugo");
+		Assert.assertTrue(this.alphaCase.getName() == "Hugo");
+	}
 
-    @Test
-    public void testAlphaCard() {
-        assertEquals(0, alphaCase.getAlphaCards().size());
+	/**
+	 * Test participants.
+	 */
+	@Test
+	public void testParticipants() {
+		Assert.assertEquals(0, this.alphaCase.getListOfParticipants().size());
 
-        alphaCase.addAlphaCard(alphaCard1);
-        assertEquals(1, alphaCase.getAlphaCards().size());
+		this.alphaCase.addParticipant(this.participant);
+		Assert.assertEquals(1, this.alphaCase.getListOfParticipants().size());
 
-        alphaCase.getAlphaCards().contains(alphaCard1);
-    }
+		this.alphaCase.getListOfParticipants().contains(this.participant);
 
-    @Test
-    public void testAddAlphaCard() {
+		this.alphaCase.removeParticipant(this.participant);
+		Assert.assertEquals(0, this.alphaCase.getListOfParticipants().size());
 
-        alphaCase.addAlphaCard(alphaCard1);
+		Assert.assertTrue(this.alphaCase.getParticipantsCRA() != null);
+	}
 
-        alphaCase.addAlphaCard(alphaCard2);
+	/**
+	 * Test alpha card.
+	 */
+	@Test
+	public void testAlphaCard() {
+		Assert.assertEquals(0, this.alphaCase.getAlphaCards().size());
 
-        alphaCase.addAlphaCard(alphaCard3, 0);
+		this.alphaCase.addAlphaCard(this.alphaCard1);
+		Assert.assertEquals(1, this.alphaCase.getAlphaCards().size());
 
-        assertTrue(alphaCase.getAlphaCards().get(0).equals(alphaCard3));
-        assertTrue(alphaCase.getAlphaCards().get(1).equals(alphaCard1));
-        assertTrue(alphaCase.getAlphaCards().get(2).equals(alphaCard2));
+		this.alphaCase.getAlphaCards().contains(this.alphaCard1);
+	}
 
-    }
+	/**
+	 * Test add alpha card.
+	 */
+	@Test
+	public void testAddAlphaCard() {
 
-    @Test
-    public void testMoveAlphaCard() {
+		this.alphaCase.addAlphaCard(this.alphaCard1);
 
-        alphaCase.addAlphaCard(alphaCard1);
+		this.alphaCase.addAlphaCard(this.alphaCard2);
 
-        alphaCase.addAlphaCard(alphaCard2);
+		this.alphaCase.addAlphaCard(this.alphaCard3, 0);
 
-        alphaCase.addAlphaCard(alphaCard3);
+		Assert.assertTrue(this.alphaCase.getAlphaCards().get(0)
+				.equals(this.alphaCard3));
+		Assert.assertTrue(this.alphaCase.getAlphaCards().get(1)
+				.equals(this.alphaCard1));
+		Assert.assertTrue(this.alphaCase.getAlphaCards().get(2)
+				.equals(this.alphaCard2));
 
-        alphaCase.moveAlphaCard(alphaCard1, 1);
+	}
 
-        assertTrue(alphaCase.getAlphaCards().get(1).equals(alphaCard1));
-        assertTrue(alphaCase.getAlphaCards().get(0).equals(alphaCard2));
-        assertTrue(alphaCase.getAlphaCards().get(2).equals(alphaCard3));
+	/**
+	 * Test move alpha card.
+	 */
+	@Test
+	public void testMoveAlphaCard() {
 
-    }
+		this.alphaCase.addAlphaCard(this.alphaCard1);
 
-    @Test
-    public void testRemoveAlphaCard() {
+		this.alphaCase.addAlphaCard(this.alphaCard2);
 
-        alphaCase.addAlphaCard(alphaCard1);
+		this.alphaCase.addAlphaCard(this.alphaCard3);
 
-        assertTrue(alphaCase.getAlphaCards().get(0).equals(alphaCard1));
-        assertFalse(alphaCase.getAlphaCards().isEmpty());
+		this.alphaCase.moveAlphaCard(this.alphaCard1, 1);
 
-        alphaCase.removeAlphaCard(alphaCard1);
+		Assert.assertTrue(this.alphaCase.getAlphaCards().get(1)
+				.equals(this.alphaCard1));
+		Assert.assertTrue(this.alphaCase.getAlphaCards().get(0)
+				.equals(this.alphaCard2));
+		Assert.assertTrue(this.alphaCase.getAlphaCards().get(2)
+				.equals(this.alphaCard3));
 
-        assertTrue(alphaCase.getAlphaCards().isEmpty());
+	}
 
-        assertTrue(alphaCase.getAlphaCasePSA() != null);
-    }
+	/**
+	 * Test remove alpha card.
+	 */
+	@Test
+	public void testRemoveAlphaCard() {
 
-    @Test
-    public void testEqualsObject() {
-        AlphaCase alphaCase2 = new AlphaCase();
-        alphaCase2.setCaseId(testId);
-        alphaCase2.setName(name);
+		this.alphaCase.addAlphaCard(this.alphaCard1);
 
-        assertTrue(alphaCase.equals(alphaCase2));
+		Assert.assertTrue(this.alphaCase.getAlphaCards().get(0)
+				.equals(this.alphaCard1));
+		Assert.assertFalse(this.alphaCase.getAlphaCards().isEmpty());
 
-        assertFalse(alphaCase.equals(new AlphaCard()));
-    }
+		this.alphaCase.removeAlphaCard(this.alphaCard1);
 
-    @Test
-    public void testToString() {
-        alphaCase.toString();
-    }
+		Assert.assertTrue(this.alphaCase.getAlphaCards().isEmpty());
+
+		Assert.assertTrue(this.alphaCase.getAlphaCasePSA() != null);
+	}
+
+	/**
+	 * Test equals object.
+	 */
+	@Test
+	public void testEqualsObject() {
+		final AlphaCase alphaCase2 = new AlphaCase();
+		alphaCase2.setCaseId(this.testId);
+		alphaCase2.setName(this.name);
+
+		Assert.assertTrue(this.alphaCase.equals(alphaCase2));
+
+		Assert.assertFalse(this.alphaCase.equals(new AlphaCard()));
+	}
+
+	/**
+	 * Test to string.
+	 */
+	@Test
+	public void testToString() {
+		this.alphaCase.toString();
+	}
 }

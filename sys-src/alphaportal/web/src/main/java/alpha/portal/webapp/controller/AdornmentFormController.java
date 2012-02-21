@@ -1,6 +1,25 @@
+/**************************************************************************
+ * alpha-Portal: A web portal, for managing knowledge-driven 
+ * ad-hoc processes, in form of case files.
+ * ==============================================
+ * Copyright (C) 2011-2012 by 
+ *   - Christoph P. Neumann (http://www.chr15t0ph.de)
+ *   - and the SWAT 2011 team
+ **************************************************************************
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and 
+ * limitations under the License.
+ **************************************************************************
+ * $Id$
+ *************************************************************************/
 package alpha.portal.webapp.controller;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -41,191 +60,235 @@ import alpha.portal.service.UserExtensionManager;
 @RequestMapping("/adornmentform*")
 public class AdornmentFormController extends BaseFormController {
 
-    @Autowired
-    private AlphaCardManager alphaCardManager;
+	/** The alpha card manager. */
+	@Autowired
+	private AlphaCardManager alphaCardManager;
 
-    @Autowired
-    private ContributorRoleManager contributorRoleManager;
+	/** The contributor role manager. */
+	@Autowired
+	private ContributorRoleManager contributorRoleManager;
 
-    @Autowired
-    private GenericManager<Adornment, Long> adornmentManager;
+	/** The adornment manager. */
+	@Autowired
+	private GenericManager<Adornment, Long> adornmentManager;
 
-    @Autowired
-    private UserExtensionManager userExtensionManager;
+	/** The user extension manager. */
+	@Autowired
+	private UserExtensionManager userExtensionManager;
 
-    /**
-     * Must be called in each function of this controller to set allowed valueRange for specific AdornmentTypes.
-     * 
-     * @param caseId
-     *            of the case of the current card
-     * @param cardId
-     *            of the current card
-     */
-    private void setupAdornmentTypes(final String caseId, final String cardId) {
-        List<ContributorRole> roles = contributorRoleManager.getAll();
-        List<String> roleNames = new LinkedList<String>();
-        for (ContributorRole r : roles) {
-            roleNames.add(r.getName());
-        }
-        AdornmentType.ContributorRole.setValueRange(new AdornmentTypeRange(roleNames.toArray(new String[] {})));
+	/**
+	 * Must be called in each function of this controller to set allowed
+	 * valueRange for specific AdornmentTypes.
+	 * 
+	 * @param caseId
+	 *            of the case of the current card
+	 * @param cardId
+	 *            of the current card
+	 */
+	private void setupAdornmentTypes(final String caseId, final String cardId) {
+		final List<ContributorRole> roles = this.contributorRoleManager
+				.getAll();
+		final List<String> roleNames = new LinkedList<String>();
+		for (final ContributorRole r : roles) {
+			roleNames.add(r.getName());
+		}
+		AdornmentType.ContributorRole.setValueRange(new AdornmentTypeRange(
+				roleNames.toArray(new String[] {})));
 
-        AlphaCard card = alphaCardManager.get(new AlphaCardIdentifier(caseId, cardId));
-        Adornment contributorRole = card.getAlphaCardDescriptor().getAdornment(AdornmentType.ContributorRole.getName());
+		final AlphaCard card = this.alphaCardManager
+				.get(new AlphaCardIdentifier(caseId, cardId));
+		final Adornment contributorRole = card.getAlphaCardDescriptor()
+				.getAdornment(AdornmentType.ContributorRole.getName());
 
-        List<String> userIds = new LinkedList<String>();
-        if (contributorRole == null || StringUtils.isBlank(contributorRole.getValue())) {
-            List<User> users = getUserManager().getAll();
-            for (User u : users) {
-                userIds.add(u.getId().toString());
-            }
-        } else {
-            List<UserExtension> users = userExtensionManager.getUserExtensionsByContributorRole(contributorRoleManager
-                    .getContributorRoleByName(contributorRole.getValue()));
-            for (UserExtension ue : users) {
-                userIds.add(ue.getUserId().toString());
-            }
-        }
-        AdornmentType.Contributor.setValueRange(new AdornmentTypeRange(userIds.toArray(new String[] {})));
-    }
+		final List<String> userIds = new LinkedList<String>();
+		if ((contributorRole == null)
+				|| StringUtils.isBlank(contributorRole.getValue())) {
+			final List<User> users = this.getUserManager().getAll();
+			for (final User u : users) {
+				userIds.add(u.getId().toString());
+			}
+		} else {
+			final List<UserExtension> users = this.userExtensionManager
+					.getUserExtensionsByContributorRole(this.contributorRoleManager
+							.getContributorRoleByName(contributorRole
+									.getValue()));
+			for (final UserExtension ue : users) {
+				userIds.add(ue.getUserId().toString());
+			}
+		}
+		AdornmentType.Contributor.setValueRange(new AdornmentTypeRange(userIds
+				.toArray(new String[] {})));
+	}
 
-    @InitBinder
-    public void initBinder(final WebDataBinder binder) {
-        binder.setRequiredFields("name", "value");
-        binder.setDisallowedFields("adornmentId");
-    }
+	/**
+	 * Inits the binder.
+	 * 
+	 * @param binder
+	 *            the binder
+	 */
+	@InitBinder
+	public void initBinder(final WebDataBinder binder) {
+		binder.setRequiredFields("name", "value");
+		binder.setDisallowedFields("adornmentId");
+	}
 
-    /**
-     * shows the adornment form.
-     * 
-     * @param request
-     * 
-     * @return a new adornment
-     * @throws IOException
-     * 
-     * @see adornmentform.jsp
-     */
-    @RequestMapping(method = RequestMethod.GET)
-    protected String showForm(final HttpServletRequest request, final Model model) {
-        String adornmentId = request.getParameter("id");
-        String cardId = request.getParameter("card");
-        String caseId = request.getParameter("case");
-        setCancelView("redirect:/caseform?activeCardId=" + cardId + "&caseId=" + caseId);
-        setSuccessView("redirect:/caseform?activeCardId=" + cardId + "&caseId=" + caseId);
-        setupAdornmentTypes(caseId, cardId);
-        Locale locale = request.getLocale();
+	/**
+	 * shows the adornment form.
+	 * 
+	 * @param request
+	 *            the request
+	 * @param model
+	 *            the model
+	 * @return a new adornment
+	 * @see adornmentform.jsp
+	 */
+	@RequestMapping(method = RequestMethod.GET)
+	protected String showForm(final HttpServletRequest request,
+			final Model model) {
+		final String adornmentId = request.getParameter("id");
+		final String cardId = request.getParameter("card");
+		final String caseId = request.getParameter("case");
+		this.setCancelView("redirect:/caseform?activeCardId=" + cardId
+				+ "&caseId=" + caseId);
+		this.setSuccessView("redirect:/caseform?activeCardId=" + cardId
+				+ "&caseId=" + caseId);
+		this.setupAdornmentTypes(caseId, cardId);
+		final Locale locale = request.getLocale();
 
-        List<ContributorRole> roles = contributorRoleManager.getAll();
-        model.addAttribute("roles", roles);
+		final List<ContributorRole> roles = this.contributorRoleManager
+				.getAll();
+		model.addAttribute("roles", roles);
 
-        Adornment adornment = new Adornment();
-        if (StringUtils.isNotEmpty(adornmentId)) {
-            try {
-                Long.valueOf(adornmentId);
-            } catch (NumberFormatException e) {
-                saveError(request, getText("adornment.invalidId", locale));
-                model.addAttribute("adornment", adornment);
-                return "redirect:/adornmentform?id=" + adornmentId + "&card=" + cardId + "&case=" + caseId;
-            }
-            adornment = adornmentManager.get(Long.valueOf(adornmentId));
-            AdornmentType type = AdornmentType.fromName(adornment.getName());
-            model.addAttribute("adornmentType", type);
+		Adornment adornment = new Adornment();
+		if (StringUtils.isNotEmpty(adornmentId)) {
+			try {
+				Long.valueOf(adornmentId);
+			} catch (final NumberFormatException e) {
+				this.saveError(request,
+						this.getText("adornment.invalidId", locale));
+				model.addAttribute("adornment", adornment);
+				return "redirect:/adornmentform?id=" + adornmentId + "&card="
+						+ cardId + "&case=" + caseId;
+			}
+			adornment = this.adornmentManager.get(Long.valueOf(adornmentId));
+			final AdornmentType type = AdornmentType.fromName(adornment
+					.getName());
+			model.addAttribute("adornmentType", type);
 
-        }
+		}
 
-        AlphaCard card = alphaCardManager.get(new AlphaCardIdentifier(caseId, cardId));
-        Adornment contributor = card.getAlphaCardDescriptor().getAdornment(AdornmentType.Contributor.getName());
+		final AlphaCard card = this.alphaCardManager
+				.get(new AlphaCardIdentifier(caseId, cardId));
+		final Adornment contributor = card.getAlphaCardDescriptor()
+				.getAdornment(AdornmentType.Contributor.getName());
 
-        if (contributor.getValue() == null || contributor.getValue().isEmpty()) {
+		if ((contributor.getValue() == null)
+				|| contributor.getValue().isEmpty()) {
 
-            saveError(request, getText("adornment.noAccess", locale));
-            return "redirect:/caseform?activeCardId=" + cardId + "&caseId=" + caseId;
+			this.saveError(request, this.getText("adornment.noAccess", locale));
+			return "redirect:/caseform?activeCardId=" + cardId + "&caseId="
+					+ caseId;
 
-        } else {
+		} else {
 
-            Long contributorID = Long.parseLong(contributor.getValue());
-            User currentUser = getUserManager().getUserByUsername(request.getRemoteUser());
+			final Long contributorID = Long.parseLong(contributor.getValue());
+			final User currentUser = this.getUserManager().getUserByUsername(
+					request.getRemoteUser());
 
-            if (contributorID != currentUser.getId()) {
+			if (contributorID != currentUser.getId()) {
 
-                saveError(request, getText("adornment.noAccess", locale));
-                return "redirect:/caseform?activeCardId=" + cardId + "&caseId=" + caseId;
-            }
-        }
+				this.saveError(request,
+						this.getText("adornment.noAccess", locale));
+				return "redirect:/caseform?activeCardId=" + cardId + "&caseId="
+						+ caseId;
+			}
+		}
 
-        model.addAttribute("adornment", adornment);
-        return null;
-    }
+		model.addAttribute("adornment", adornment);
+		return null;
+	}
 
-    /**
-     * handles the case, if the user clicks on one of the buttons.
-     * 
-     * @param newAdornment
-     * 
-     * @param errors
-     * 
-     * @param request
-     * 
-     * @param response
-     * 
-     * @return success
-     * 
-     * @throws Exception
-     */
-    @RequestMapping(method = RequestMethod.POST)
-    public String onSubmit(final Adornment newAdornment, final BindingResult errors, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
-        if (request.getParameter("cancel") != null)
-            return getCancelView();
+	/**
+	 * handles the case, if the user clicks on one of the buttons.
+	 * 
+	 * @param newAdornment
+	 *            the new adornment
+	 * @param errors
+	 *            the errors
+	 * @param request
+	 *            the request
+	 * @param response
+	 *            the response
+	 * @return success
+	 * @throws Exception
+	 *             the exception
+	 */
+	@RequestMapping(method = RequestMethod.POST)
+	public String onSubmit(final Adornment newAdornment,
+			final BindingResult errors, final HttpServletRequest request,
+			final HttpServletResponse response) throws Exception {
+		if (request.getParameter("cancel") != null)
+			return this.getCancelView();
 
-        String adornmentId = request.getParameter("adornmentId");
-        String cardId = request.getParameter("card");
-        String caseId = request.getParameter("case");
-        String success = getSuccessView();
-        Locale locale = request.getLocale();
-        setupAdornmentTypes(caseId, cardId);
+		final String adornmentId = request.getParameter("adornmentId");
+		final String cardId = request.getParameter("card");
+		final String caseId = request.getParameter("case");
+		final String success = this.getSuccessView();
+		final Locale locale = request.getLocale();
+		this.setupAdornmentTypes(caseId, cardId);
 
-        AlphaCardIdentifier alphaCardIdentifier = new AlphaCardIdentifier(caseId, cardId);
-        AlphaCard card = alphaCardManager.get(alphaCardIdentifier);
+		final AlphaCardIdentifier alphaCardIdentifier = new AlphaCardIdentifier(
+				caseId, cardId);
+		AlphaCard card = this.alphaCardManager.get(alphaCardIdentifier);
 
-        if (request.getParameter("delete") != null) {
-            if (AdornmentType.fromName(newAdornment.getName()) == null) {
-                card.getAlphaCardDescriptor().deleteAdornment(newAdornment.getName());
-                saveMessage(request, getText("adornment.deleted", locale));
-            } else {
-                newAdornment.setValue("");
-                if (AdornmentRules.applyRules(card, newAdornment)) {
-                    card.getAlphaCardDescriptor().setAdornment(newAdornment);
-                    saveMessage(request, getText("adornment.deleted", locale));
-                } else {
-                    saveError(request, getText("adornment.errorDelete", locale));
-                    return getCancelView();
-                }
-            }
+		if (request.getParameter("delete") != null) {
+			if (AdornmentType.fromName(newAdornment.getName()) == null) {
+				card.getAlphaCardDescriptor().deleteAdornment(
+						newAdornment.getName());
+				this.saveMessage(request,
+						this.getText("adornment.deleted", locale));
+			} else {
+				newAdornment.setValue("");
+				if (AdornmentRules.applyRules(card, newAdornment)) {
+					card.getAlphaCardDescriptor().setAdornment(newAdornment);
+					this.saveMessage(request,
+							this.getText("adornment.deleted", locale));
+				} else {
+					this.saveError(request,
+							this.getText("adornment.errorDelete", locale));
+					return this.getCancelView();
+				}
+			}
 
-        } else {
-            if (newAdornment.getName() == AdornmentType.DataProvision.getName()) {
-                saveError(request, getText("adornment.errorChange", locale));
-                return getCancelView();
-            }
-            if (AdornmentRules.applyRules(card, newAdornment)) {
-                boolean isNew = card.getAlphaCardDescriptor().getAdornment(newAdornment.getName()) == null;
-                card.getAlphaCardDescriptor().setAdornment(newAdornment);
-                String key = (isNew) ? "adornment.added" : "adornment.updated";
-                saveMessage(request, getText(key, locale));
-            } else {
-                saveError(request, getText("adornment.errorChange", locale));
-                return getCancelView();
-            }
-        }
+		} else {
+			if (newAdornment.getName() == AdornmentType.DataProvision.getName()) {
+				this.saveError(request,
+						this.getText("adornment.errorChange", locale));
+				return this.getCancelView();
+			}
+			if (AdornmentRules.applyRules(card, newAdornment)) {
+				final boolean isNew = card.getAlphaCardDescriptor()
+						.getAdornment(newAdornment.getName()) == null;
+				card.getAlphaCardDescriptor().setAdornment(newAdornment);
+				final String key = (isNew) ? "adornment.added"
+						: "adornment.updated";
+				this.saveMessage(request, this.getText(key, locale));
+			} else {
+				this.saveError(request,
+						this.getText("adornment.errorChange", locale));
+				return this.getCancelView();
+			}
+		}
 
-        // update Data Provision Adornment after any adornment change
-        card.getAlphaCardDescriptor().setAdornment(AdornmentType.DataProvision.getName(),
-                AdornmentRules.getDataProvisionStatus(card));
+		// update Data Provision Adornment after any adornment change
+		card.getAlphaCardDescriptor().setAdornment(
+				AdornmentType.DataProvision.getName(),
+				AdornmentRules.getDataProvisionStatus(card));
 
-        if (card.getAlphaCardDescriptor().isAdornmentsChanged()) {
-            card = alphaCardManager.save(card);
-        }
+		if (card.getAlphaCardDescriptor().isAdornmentsChanged()) {
+			card = this.alphaCardManager.save(card);
+		}
 
-        return success;
-    }
+		return success;
+	}
 }

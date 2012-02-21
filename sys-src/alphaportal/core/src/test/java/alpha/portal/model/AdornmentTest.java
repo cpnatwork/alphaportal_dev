@@ -1,80 +1,132 @@
+/**************************************************************************
+ * alpha-Portal: A web portal, for managing knowledge-driven 
+ * ad-hoc processes, in form of case files.
+ * ==============================================
+ * Copyright (C) 2011-2012 by 
+ *   - Christoph P. Neumann (http://www.chr15t0ph.de)
+ *   - and the SWAT 2011 team
+ **************************************************************************
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and 
+ * limitations under the License.
+ **************************************************************************
+ * $Id$
+ *************************************************************************/
 package alpha.portal.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * The Class AdornmentTest.
+ */
 public class AdornmentTest {
 
-    @Autowired
-    private Adornment testAdornment = new Adornment();
+	/** The test adornment. */
+	@Autowired
+	private Adornment testAdornment = new Adornment();
 
-    private String testName = "mytestname";
-    private long testId = 999l;
-    private String testValue = "mytestadornmentvalue";
+	/** The test name. */
+	private final String testName = "mytestname";
 
-    @Before
-    public void setUp() {
-        testAdornment.setName(testName);
-        testAdornment.setAdornmentId(testId);
-        testAdornment.setValue(testValue);
-    }
+	/** The test id. */
+	private final long testId = 999l;
 
-    @After
-    public void tearDown() {
-        testAdornment = null;
-    }
+	/** The test value. */
+	private final String testValue = "mytestadornmentvalue";
 
-    @Test
-    public void testSetName() {
-        assertTrue(testAdornment.getName().equals(testName));
-    }
+	/**
+	 * Sets the up.
+	 */
+	@Before
+	public void setUp() {
+		this.testAdornment.setName(this.testName);
+		this.testAdornment.setAdornmentId(this.testId);
+		this.testAdornment.setValue(this.testValue);
+	}
 
-    @Test
-    public void setAdornmentId() {
-        testAdornment.setAdornmentId(999l);
-        assertTrue(testAdornment.getAdornmentId() == 999l);
-        testAdornment.setAdornmentId(testId);
-    }
+	/**
+	 * Tear down.
+	 */
+	@After
+	public void tearDown() {
+		this.testAdornment = null;
+	}
 
-    @Test
-    public void getAdornmentId() {
-        assertTrue(testAdornment.getAdornmentId() == testId);
-    }
+	/**
+	 * Test set name.
+	 */
+	@Test
+	public void testSetName() {
+		Assert.assertTrue(this.testAdornment.getName().equals(this.testName));
+	}
 
-    @Test
-    public void testEqualsObject() {
-        Adornment ad2 = new Adornment();
-        ad2.setAdornmentId(testId);
-        ad2.setName(testName);
-        ad2.setValue(testValue);
+	/**
+	 * Sets the adornment id.
+	 */
+	@Test
+	public void setAdornmentId() {
+		this.testAdornment.setAdornmentId(999l);
+		Assert.assertTrue(this.testAdornment.getAdornmentId() == 999l);
+		this.testAdornment.setAdornmentId(this.testId);
+	}
 
-        assertTrue(testAdornment.equals(ad2));
+	/**
+	 * Gets the adornment id.
+	 * 
+	 * @return the adornment id
+	 */
+	@Test
+	public void getAdornmentId() {
+		Assert.assertTrue(this.testAdornment.getAdornmentId() == this.testId);
+	}
 
-        assertFalse(testAdornment.equals(new AlphaCard()));
-    }
+	/**
+	 * Test equals object.
+	 */
+	@Test
+	public void testEqualsObject() {
+		final Adornment ad2 = new Adornment();
+		ad2.setAdornmentId(this.testId);
+		ad2.setName(this.testName);
+		ad2.setValue(this.testValue);
 
-    @Test
-    public void testToString() {
-        Adornment ad3 = new Adornment();
-        ad3.setAdornmentId(testId);
-        ad3.setName(testName);
-        ad3.setValue(testValue);
+		Assert.assertTrue(this.testAdornment.equals(ad2));
 
-        assertTrue(ad3.toString().length() > 0);
-    }
+		Assert.assertFalse(this.testAdornment.equals(new AlphaCard()));
+	}
 
-    @Test
-    public void testClone() {
-        Adornment a = new Adornment();
-        a.setName("test");
-        a.setValue("lol");
-        Adornment a2 = a.clone();
-        assertEquals(a, a2);
-    }
+	/**
+	 * Test to string.
+	 */
+	@Test
+	public void testToString() {
+		final Adornment ad3 = new Adornment();
+		ad3.setAdornmentId(this.testId);
+		ad3.setName(this.testName);
+		ad3.setValue(this.testValue);
+
+		Assert.assertTrue(ad3.toString().length() > 0);
+	}
+
+	/**
+	 * Test clone.
+	 */
+	@Test
+	public void testClone() {
+		final Adornment a = new Adornment();
+		a.setName("test");
+		a.setValue("lol");
+		final Adornment a2 = a.clone();
+		Assert.assertEquals(a, a2);
+	}
 }

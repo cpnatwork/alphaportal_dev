@@ -1,11 +1,24 @@
+/**************************************************************************
+ * alpha-Portal: A web portal, for managing knowledge-driven 
+ * ad-hoc processes, in form of case files.
+ * ==============================================
+ * Copyright (C) 2011-2012 by 
+ *   - Christoph P. Neumann (http://www.chr15t0ph.de)
+ *   - and the SWAT 2011 team
+ **************************************************************************
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and 
+ * limitations under the License.
+ **************************************************************************
+ * $Id$
+ *************************************************************************/
 package alpha.portal.webapp.controller;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -13,6 +26,7 @@ import java.util.Map;
 import org.appfuse.Constants;
 import org.appfuse.model.User;
 import org.appfuse.service.UserManager;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -25,151 +39,233 @@ import org.springframework.validation.DataBinder;
 import alpha.portal.model.ContributorRole;
 import alpha.portal.model.UserExtension;
 
+/**
+ * The Class UserFormControllerTest.
+ */
 public class UserFormControllerTest extends BaseControllerTestCase {
 
-    @Autowired
-    private UserFormController c = null;
-    private MockHttpServletRequest request;
-    private User user;
+	/** The c. */
+	@Autowired
+	private final UserFormController c = null;
 
-    @Test
-    public void testAdd() throws Exception {
-        log.debug("testing add new user...");
-        request = newGet("/userform.html");
-        request.addParameter("method", "Add");
-        request.addUserRole(Constants.ADMIN_ROLE);
+	/** The request. */
+	private MockHttpServletRequest request;
 
-        Map<String, Object> model = c.showForm(request, new MockHttpServletResponse()).getModel();
-        Object object = model.get("user");
-        assertTrue(object instanceof User);
-        user = (User) object;
-        assertNull(user.getUsername());
-    }
+	/** The user. */
+	private User user;
 
-    @Test
-    public void testAddWithoutPermission() throws Exception {
-        log.debug("testing add new user...");
-        request = newGet("/userform.html");
-        request.addParameter("method", "Add");
+	/**
+	 * Test add.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Test
+	public void testAdd() throws Exception {
+		this.log.debug("testing add new user...");
+		this.request = this.newGet("/userform.html");
+		this.request.addParameter("method", "Add");
+		this.request.addUserRole(Constants.ADMIN_ROLE);
 
-        try {
-            c.showForm(request, new MockHttpServletResponse());
-            fail("AccessDeniedException not thrown...");
-        } catch (AccessDeniedException ade) {
-            assertNotNull(ade.getMessage());
-        }
-    }
+		final Map<String, Object> model = this.c.showForm(this.request,
+				new MockHttpServletResponse()).getModel();
+		final Object object = model.get("user");
+		Assert.assertTrue(object instanceof User);
+		this.user = (User) object;
+		Assert.assertNull(this.user.getUsername());
+	}
 
-    @Test
-    public void testCancel() throws Exception {
-        log.debug("testing cancel...");
-        request = newPost("/userform.html");
-        request.addParameter("cancel", "");
+	/**
+	 * Test add without permission.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Test
+	public void testAddWithoutPermission() throws Exception {
+		this.log.debug("testing add new user...");
+		this.request = this.newGet("/userform.html");
+		this.request.addParameter("method", "Add");
 
-        BindingResult errors = new DataBinder(user).getBindingResult();
-        String view = c.onSubmit(user, errors, request, new MockHttpServletResponse(), null);
+		try {
+			this.c.showForm(this.request, new MockHttpServletResponse());
+			Assert.fail("AccessDeniedException not thrown...");
+		} catch (final AccessDeniedException ade) {
+			Assert.assertNotNull(ade.getMessage());
+		}
+	}
 
-        assertEquals("redirect:/mainMenu", view);
-    }
+	/**
+	 * Test cancel.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Test
+	public void testCancel() throws Exception {
+		this.log.debug("testing cancel...");
+		this.request = this.newPost("/userform.html");
+		this.request.addParameter("cancel", "");
 
-    @Test
-    public void testEdit() throws Exception {
-        log.debug("testing edit...");
-        request = newGet("/userform.html");
-        request.addParameter("id", "-1");
-        request.addUserRole(Constants.ADMIN_ROLE);
+		final BindingResult errors = new DataBinder(this.user)
+				.getBindingResult();
+		final String view = this.c.onSubmit(this.user, errors, this.request,
+				new MockHttpServletResponse(), null);
 
-        Map<String, Object> model = c.showForm(request, new MockHttpServletResponse()).getModel();
-        Object object = model.get("user");
-        assertTrue(object instanceof User);
-        user = (User) object;
-        assertEquals("Tomcat User", user.getFullName());
-    }
+		Assert.assertEquals("redirect:/mainMenu", view);
+	}
 
-    @Test
-    public void testEditWithoutPermission() throws Exception {
-        log.debug("testing edit...");
-        request = newGet("/userform.html");
-        request.addParameter("id", "-1"); // regular user
+	/**
+	 * Test edit.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Test
+	public void testEdit() throws Exception {
+		this.log.debug("testing edit...");
+		this.request = this.newGet("/userform.html");
+		this.request.addParameter("id", "-1");
+		this.request.addUserRole(Constants.ADMIN_ROLE);
 
-        try {
-            c.showForm(request, new MockHttpServletResponse());
-            fail("AccessDeniedException not thrown...");
-        } catch (AccessDeniedException ade) {
-            assertNotNull(ade.getMessage());
-        }
-    }
+		final Map<String, Object> model = this.c.showForm(this.request,
+				new MockHttpServletResponse()).getModel();
+		final Object object = model.get("user");
+		Assert.assertTrue(object instanceof User);
+		this.user = (User) object;
+		Assert.assertEquals("Tomcat User", this.user.getFullName());
+	}
 
-    @Test
-    public void testEditProfile() throws Exception {
-        log.debug("testing edit profile...");
-        request = newGet("/userform.html");
-        request.setRemoteUser("user");
+	/**
+	 * Test edit without permission.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Test
+	public void testEditWithoutPermission() throws Exception {
+		this.log.debug("testing edit...");
+		this.request = this.newGet("/userform.html");
+		this.request.addParameter("id", "-1"); // regular user
 
-        Map<String, Object> model = c.showForm(request, new MockHttpServletResponse()).getModel();
-        Object object = model.get("user");
-        assertTrue(object instanceof User);
-        user = (User) object;
-        assertEquals("Tomcat User", user.getFullName());
-    }
+		try {
+			this.c.showForm(this.request, new MockHttpServletResponse());
+			Assert.fail("AccessDeniedException not thrown...");
+		} catch (final AccessDeniedException ade) {
+			Assert.assertNotNull(ade.getMessage());
+		}
+	}
 
-    @Test
-    public void testSave() throws Exception {
-        request = newPost("/userform.html");
-        // set updated properties first since adding them later will
-        // result in multiple parameters with the same name getting sent
-        User user = ((UserManager) applicationContext.getBean("userManager")).getUser("-1");
-        user.setConfirmPassword(user.getPassword());
-        user.setLastName("Updated Last Name");
+	/**
+	 * Test edit profile.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Test
+	public void testEditProfile() throws Exception {
+		this.log.debug("testing edit profile...");
+		this.request = this.newGet("/userform.html");
+		this.request.setRemoteUser("user");
 
-        BindingResult errors = new DataBinder(user).getBindingResult();
-        c.onSubmit(user, errors, request, new MockHttpServletResponse(), null);
+		final Map<String, Object> model = this.c.showForm(this.request,
+				new MockHttpServletResponse()).getModel();
+		final Object object = model.get("user");
+		Assert.assertTrue(object instanceof User);
+		this.user = (User) object;
+		Assert.assertEquals("Tomcat User", this.user.getFullName());
+	}
 
-        assertFalse(errors.hasErrors());
-        assertNotNull(request.getSession().getAttribute("successMessages"));
-    }
+	/**
+	 * Test save.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Test
+	public void testSave() throws Exception {
+		this.request = this.newPost("/userform.html");
+		// set updated properties first since adding them later will
+		// result in multiple parameters with the same name getting sent
+		final User user = ((UserManager) this.applicationContext
+				.getBean("userManager")).getUser("-1");
+		user.setConfirmPassword(user.getPassword());
+		user.setLastName("Updated Last Name");
 
-    @Test
-    public void testAddWithMissingFields() throws Exception {
-        request = newPost("/userform.html");
-        user = new User();
-        user.setFirstName("Jack");
-        request.setRemoteUser("user");
+		final BindingResult errors = new DataBinder(user).getBindingResult();
+		this.c.onSubmit(user, errors, this.request,
+				new MockHttpServletResponse(), null);
 
-        BindingResult errors = new DataBinder(user).getBindingResult();
-        c.onSubmit(user, errors, request, new MockHttpServletResponse(), new ExtendedModelMap());
+		Assert.assertFalse(errors.hasErrors());
+		Assert.assertNotNull(this.request.getSession().getAttribute(
+				"successMessages"));
+	}
 
-        assertTrue(errors.getAllErrors().size() == 10);
-    }
+	/**
+	 * Test add with missing fields.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Test
+	public void testAddWithMissingFields() throws Exception {
+		this.request = this.newPost("/userform.html");
+		this.user = new User();
+		this.user.setFirstName("Jack");
+		this.request.setRemoteUser("user");
 
-    @Test
-    public void testRemove() throws Exception {
-        request = newPost("/userform.html");
-        request.addParameter("delete", "");
-        user = new User();
-        user.setId(-2L);
+		final BindingResult errors = new DataBinder(this.user)
+				.getBindingResult();
+		this.c.onSubmit(this.user, errors, this.request,
+				new MockHttpServletResponse(), new ExtendedModelMap());
 
-        BindingResult errors = new DataBinder(user).getBindingResult();
-        c.onSubmit(user, errors, request, new MockHttpServletResponse(), null);
+		Assert.assertTrue(errors.getAllErrors().size() == 10);
+	}
 
-        assertNotNull(request.getSession().getAttribute("successMessages"));
-    }
+	/**
+	 * Test remove.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Test
+	public void testRemove() throws Exception {
+		this.request = this.newPost("/userform.html");
+		this.request.addParameter("delete", "");
+		this.user = new User();
+		this.user.setId(-2L);
 
-    @Test
-    public void testContibutorRoleStuff() throws Exception {
-        request = newGet("/userform.html");
-        request.setRemoteUser("admin");
+		final BindingResult errors = new DataBinder(this.user)
+				.getBindingResult();
+		this.c.onSubmit(this.user, errors, this.request,
+				new MockHttpServletResponse(), null);
 
-        Map<String, Object> model = c.showForm(request, new MockHttpServletResponse()).getModel();
-        Object object = model.get("userExtension");
-        assertNotNull(object);
-        assertTrue(object instanceof UserExtension);
-        object = model.get("contributorRoles");
-        assertNotNull(object);
-        assertTrue(object instanceof ArrayList<?>);
-        ArrayList<?> objList = (ArrayList<?>) object;
-        if (objList.size() > 0) {
-            assertTrue(objList.get(0) instanceof ContributorRole);
-        }
-    }
+		Assert.assertNotNull(this.request.getSession().getAttribute(
+				"successMessages"));
+	}
+
+	/**
+	 * Test contibutor role stuff.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Test
+	public void testContibutorRoleStuff() throws Exception {
+		this.request = this.newGet("/userform.html");
+		this.request.setRemoteUser("admin");
+
+		final Map<String, Object> model = this.c.showForm(this.request,
+				new MockHttpServletResponse()).getModel();
+		Object object = model.get("userExtension");
+		Assert.assertNotNull(object);
+		Assert.assertTrue(object instanceof UserExtension);
+		object = model.get("contributorRoles");
+		Assert.assertNotNull(object);
+		Assert.assertTrue(object instanceof ArrayList<?>);
+		final ArrayList<?> objList = (ArrayList<?>) object;
+		if (objList.size() > 0) {
+			Assert.assertTrue(objList.get(0) instanceof ContributorRole);
+		}
+	}
 }
