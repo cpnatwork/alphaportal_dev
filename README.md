@@ -1,1 +1,3 @@
-# alphaportal_dev
+# alpha-Portal
+
+Document-oriented Process Management
